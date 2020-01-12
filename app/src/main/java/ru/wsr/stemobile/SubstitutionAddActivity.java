@@ -32,14 +32,14 @@ public class SubstitutionAddActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 CalendarConstraints.Builder calendarConstraintsBuilder = new CalendarConstraints.Builder();
-                calendarConstraintsBuilder.setValidator(new STEDateValidator(Calendar.getInstance().getTimeInMillis()));
-                calendarConstraintsBuilder.setStart(Calendar.getInstance().getTimeInMillis());
-                calendarConstraintsBuilder.setOpenAt(Calendar.getInstance().getTimeInMillis());
+                calendarConstraintsBuilder.setValidator(new STEDateValidator(Calendar.getInstance().getTimeInMillis()))
+                        .setStart(Calendar.getInstance().getTimeInMillis())
+                        .setOpenAt(Calendar.getInstance().getTimeInMillis());
 
                 MaterialDatePicker.Builder<Long> datePickerBuilder = MaterialDatePicker.Builder.datePicker();
-                datePickerBuilder.setCalendarConstraints(calendarConstraintsBuilder.build());
-                datePickerBuilder.setTitleText("Выберите дату замещения");
-                datePickerBuilder.setSelection(Calendar.getInstance().getTimeInMillis());
+                datePickerBuilder.setCalendarConstraints(calendarConstraintsBuilder.build())
+                        .setTitleText("Выберите дату замещения")
+                        .setSelection(Calendar.getInstance().getTimeInMillis());
 
                 MaterialDatePicker<Long> datePicker = datePickerBuilder.build();
                 datePicker.show(getSupportFragmentManager(), datePicker.toString());
@@ -64,7 +64,7 @@ public class SubstitutionAddActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String currentInput = mBinding.dateInputEdit.getEditableText().toString();
-                if (currentInput.length() > 0)
+                if (!currentInput.isEmpty())
                     try {
                         if (currentInput.length() != 8) {
                             throw new ParseException("Fuck up!", 0);
@@ -89,10 +89,6 @@ public class SubstitutionAddActivity extends AppCompatActivity {
 
             }
         });
-
-    }
-
-    private void validateDateInput(){
 
     }
 
