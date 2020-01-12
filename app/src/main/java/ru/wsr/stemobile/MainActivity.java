@@ -1,16 +1,20 @@
 package ru.wsr.stemobile;
 
+import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,10 +27,12 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
+            @TargetApi(16)
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent i = new Intent(MainActivity.this, SubstitutionAddActivity.class);
+                startActivity(i);
+
             }
         });
     }
@@ -51,5 +57,30 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private static class SubstitutionAdapter extends RecyclerView.Adapter<SubstitutionAdapter.SubstitutionViewHolder>{
+        @NonNull
+        @Override
+        public SubstitutionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return null;
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull SubstitutionViewHolder holder, int position) {
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return 0;
+        }
+
+        private static class SubstitutionViewHolder extends RecyclerView.ViewHolder{
+
+            public SubstitutionViewHolder(@NonNull View itemView) {
+                super(itemView);
+            }
+        }
     }
 }
