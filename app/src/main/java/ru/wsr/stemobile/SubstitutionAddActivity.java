@@ -1,6 +1,8 @@
 package ru.wsr.stemobile;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -20,12 +22,13 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 import ru.wsr.stemobile.databinding.ActivitySubstitutionAddBinding;
+import ru.wsr.stemobile.view_models.SubstitutionAddViewModel;
 
 
 public class SubstitutionAddActivity extends AppCompatActivity {
 
     private ActivitySubstitutionAddBinding mBinding;
-
+    private SubstitutionAddViewModel mViewModel;
 
     private void setupListeners() {
         mBinding.dateInput.setEndIconOnClickListener(new View.OnClickListener() {
@@ -97,6 +100,9 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mBinding = ActivitySubstitutionAddBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+        mViewModel = ViewModelProviders.of(this).get(SubstitutionAddViewModel.class);
+
+
         setupListeners();
     }
 
