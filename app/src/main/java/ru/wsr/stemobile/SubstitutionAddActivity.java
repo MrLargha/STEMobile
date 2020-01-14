@@ -1,28 +1,26 @@
 package ru.wsr.stemobile;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 import ru.wsr.stemobile.databinding.ActivitySubstitutionAddBinding;
-import ru.wsr.stemobile.view_models.SubstitutionAddViewModel;
+import ru.wsr.stemobile.viewmodels.SubstitutionAddViewModel;
 
 
 public class SubstitutionAddActivity extends AppCompatActivity {
@@ -30,7 +28,9 @@ public class SubstitutionAddActivity extends AppCompatActivity {
     private ActivitySubstitutionAddBinding mBinding;
     private SubstitutionAddViewModel mViewModel;
 
-    private void setupListeners() {
+    private final String TAG = "ru.mrlargha.stemobile";
+
+    private void setupUIListeners() {
         mBinding.dateInput.setEndIconOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,7 +58,7 @@ public class SubstitutionAddActivity extends AppCompatActivity {
             }
         });
 
-        mBinding.dateInput.getEditText().addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(mBinding.dateInput.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -66,25 +66,7 @@ public class SubstitutionAddActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String currentInput = mBinding.dateInputEdit.getEditableText().toString();
-                if (!currentInput.isEmpty())
-                    try {
-                        if (currentInput.length() != 8) {
-                            throw new ParseException("Fuck up!", 0);
-                        }
-                        @SuppressLint("SimpleDateFormat") Date parsedDate = new SimpleDateFormat("dd.MM.yy").parse(currentInput);
-                        if (!new STEDateValidator(Calendar.getInstance().getTimeInMillis()).isValid(parsedDate.getTime())) {
-                            mBinding.dateInput.setError("Невозможно установить дату " + currentInput + "!");
-                        } else {
-                            mBinding.dateInput.setErrorEnabled(false);
-                        }
-                    } catch (ParseException e) {
-                        mBinding.dateInput.setError("Введите дату в формате ДД.ММ.ГГ");
-                    } catch (NullPointerException e){
-                        mBinding.dateInput.setError("Что за дичь вы сумели ввести?");
-                    }
-                else
-                    mBinding.dateInput.setErrorEnabled(false);
+                mViewModel.setDate(mBinding.dateInputEdit.getEditableText().toString());
             }
 
             @Override
@@ -95,15 +77,38 @@ public class SubstitutionAddActivity extends AppCompatActivity {
 
     }
 
+    private void setupObservers() {
+        mViewModel.getTeachersList().observe(this, teachersList -> {
+            mBinding.substitutingTeacherEdit.setAdapter(new ArrayAdapter<>(this,
+                    R.layout.support_simple_spinner_dropdown_item, teachersList));
+            Log.d(TAG, "setupObservers: ");
+        });
+
+        mViewModel.getSubjectsList().observe(this, subjectsList -> {
+            mBinding.substitutableSubjectEdit.setAdapter(new ArrayAdapter<>(this,
+                    R.layout.support_simple_spinner_dropdown_item, subjectsList));
+        });
+
+        mViewModel.getDateError().observe(this, dateError -> {
+            if (dateError.isEmpty()) {
+                mBinding.dateInput.setErrorEnabled(false);
+            } else {
+                mBinding.dateInput.setError(dateError);
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = ActivitySubstitutionAddBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+
         mViewModel = ViewModelProviders.of(this).get(SubstitutionAddViewModel.class);
+        mViewModel.init();
 
-
-        setupListeners();
+        setupUIListeners();
+        setupObservers();
     }
 
 

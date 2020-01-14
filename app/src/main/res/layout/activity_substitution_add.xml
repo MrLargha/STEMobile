@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
 
 
     android:layout_width="match_parent"
@@ -92,12 +91,13 @@
                 app:layout_constraintTop_toBottomOf="@+id/dateInput">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/group_edit_edit"
                     android:layout_width="match_parent"
                     android:layout_height="46dp"
+                    android:imeOptions="actionNext"
                     android:inputType="number"
                     android:nextFocusDown="@id/cab_edit"
-                    android:nextFocusForward="@id/cab_edit"
-                    android:imeOptions="actionNext"/>
+                    android:nextFocusForward="@id/cab_edit" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
