@@ -28,8 +28,6 @@ public class SubstitutionAddViewModel extends ViewModel {
     private MutableLiveData<String> date = new MutableLiveData<>("");
     private MutableLiveData<String> cabinet = new MutableLiveData<>("");
     private MutableLiveData<String> group = new MutableLiveData<>("");
-
-
     private MutableLiveData<Integer> pair = new MutableLiveData<>();
     private MutableLiveData<String> newSubject = new MutableLiveData<>("");
     private MutableLiveData<String> newTeacher = new MutableLiveData<>("");

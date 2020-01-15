@@ -1,13 +1,42 @@
-package ru.wsr.stemobile.models;
+package ru.wsr.stemobile.database;
+
+import androidx.room.ColumnInfo;
+import androidx.room.PrimaryKey;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 
 public class Substitution {
-    private String mTeacher;
-    private String mSubject;
-    private int mGroup;
-    private int mPair;
+
+    @PrimaryKey
+    @NotNull
+    @ColumnInfo(name = "uid")
+    private int mID;
+
+    @NotNull
+    @ColumnInfo(name = "date")
     private Date mDate;
+
+    @NotNull
+    @ColumnInfo(name = "group")
+    private int mGroup;
+
+    @NotNull
+    @ColumnInfo(name = "pair")
+    private int mPair;
+
+    @NotNull
+    @ColumnInfo(name = "cabinet")
+    private String mCabinet;
+
+    @NotNull
+    @ColumnInfo(name = "teacher")
+    private String mTeacher;
+
+    @NotNull
+    @ColumnInfo(name = "subject")
+    private String mSubject;
 
     public Substitution(String teacher, String subject, int group, int pair, Date date) {
         mTeacher = teacher;
