@@ -28,12 +28,18 @@ public class SubstitutionAddViewModel extends ViewModel {
     private MutableLiveData<String> date = new MutableLiveData<>("");
     private MutableLiveData<String> cabinet = new MutableLiveData<>("");
     private MutableLiveData<String> group = new MutableLiveData<>("");
+
+
+    private MutableLiveData<Integer> pair = new MutableLiveData<>();
     private MutableLiveData<String> newSubject = new MutableLiveData<>("");
     private MutableLiveData<String> newTeacher = new MutableLiveData<>("");
     private MutableLiveData<String> oldSubject = new MutableLiveData<>("");
     private MutableLiveData<String> oldTeacher = new MutableLiveData<>("");
     private MutableLiveData<ArrayList<String>> teachersList = new MutableLiveData<>();
     private MutableLiveData<ArrayList<String>> subjectsList = new MutableLiveData<>();
+
+    //Local-only data
+    private ArrayList<String> groupsList = new ArrayList<>();
 
     public MutableLiveData<ArrayList<String>> getSubjectsList() {
         return subjectsList;
@@ -47,12 +53,57 @@ public class SubstitutionAddViewModel extends ViewModel {
         return cabError;
     }
 
+    public MutableLiveData<Integer> getPair() {
+        return pair;
+    }
+
     public MutableLiveData<String> getTeacherError() {
         return teacherError;
     }
 
     public MutableLiveData<String> getDate() {
         return date;
+    }
+
+    public void setPair(int newPair) {
+        if (newPair > 0 && newPair <= 6) {
+            pair.setValue(newPair);
+            pairError.setValue("");
+        } else {
+            pairError.setValue("Неверный номер пары");
+        }
+    }
+
+    public MutableLiveData<String> getCabinet() {
+        return cabinet;
+    }
+
+    public void setCabinet(String newCabinet) {
+        cabinet.setValue(newCabinet);
+    }
+
+    public MutableLiveData<String> getGroup() {
+        return group;
+    }
+
+    public void setGroup(String newGroup) {
+        boolean containsNewGroup = false;
+        for (String elem : groupsList) {
+            if (newGroup.equals(elem)) {
+                containsNewGroup = true;
+                break;
+            }
+        }
+        if (containsNewGroup) {
+            group.setValue(newGroup);
+            groupError.setValue("");
+        } else {
+            groupError.setValue("Группа не найдена");
+        }
+    }
+
+    public MutableLiveData<String> getNewSubject() {
+        return newSubject;
     }
 
     public void setDate(String date) {
@@ -74,18 +125,6 @@ public class SubstitutionAddViewModel extends ViewModel {
             }
         else
             dateError.setValue("");
-    }
-
-    public MutableLiveData<String> getCabinet() {
-        return cabinet;
-    }
-
-    public MutableLiveData<String> getGroup() {
-        return group;
-    }
-
-    public MutableLiveData<String> getNewSubject() {
-        return newSubject;
     }
 
     public MutableLiveData<String> getNewTeacher() {
@@ -123,6 +162,10 @@ public class SubstitutionAddViewModel extends ViewModel {
         if (subjectsList.getValue() == null) {
             loadSubjects();
         }
+
+        if (groupsList.isEmpty()) {
+            loadGroups();
+        }
     }
 
     private void loadTeachers() {
@@ -135,6 +178,10 @@ public class SubstitutionAddViewModel extends ViewModel {
         ArrayList<String> teachers = new ArrayList<>(Arrays.asList("МДК 01.01", "МДК 01.02",
                 "Математика", "Информатика", "Литература", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."));
         subjectsList.setValue(teachers);
+    }
+
+    private void loadGroups() {
+        groupsList = new ArrayList<>(Arrays.asList("822", "821", "724"));
     }
 
 }

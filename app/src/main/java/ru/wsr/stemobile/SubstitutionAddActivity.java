@@ -4,16 +4,15 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -30,35 +29,34 @@ public class SubstitutionAddActivity extends AppCompatActivity {
 
     private final String TAG = "ru.mrlargha.stemobile";
 
+    private MaterialDatePicker<Long> buildDatePicker() {
+        CalendarConstraints.Builder calendarConstraintsBuilder = new CalendarConstraints.Builder();
+        calendarConstraintsBuilder.setValidator(new STEDateValidator(Calendar.getInstance().getTimeInMillis()))
+                .setStart(Calendar.getInstance().getTimeInMillis())
+                .setOpenAt(Calendar.getInstance().getTimeInMillis());
+
+        MaterialDatePicker.Builder<Long> datePickerBuilder = MaterialDatePicker.Builder.datePicker();
+        datePickerBuilder.setCalendarConstraints(calendarConstraintsBuilder.build())
+                .setTitleText("Выберите дату замещения")
+                .setSelection(Calendar.getInstance().getTimeInMillis());
+        return datePickerBuilder.build();
+    }
+
     private void setupUIListeners() {
-        mBinding.dateInput.setEndIconOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CalendarConstraints.Builder calendarConstraintsBuilder = new CalendarConstraints.Builder();
-                calendarConstraintsBuilder.setValidator(new STEDateValidator(Calendar.getInstance().getTimeInMillis()))
-                        .setStart(Calendar.getInstance().getTimeInMillis())
-                        .setOpenAt(Calendar.getInstance().getTimeInMillis());
-
-                MaterialDatePicker.Builder<Long> datePickerBuilder = MaterialDatePicker.Builder.datePicker();
-                datePickerBuilder.setCalendarConstraints(calendarConstraintsBuilder.build())
-                        .setTitleText("Выберите дату замещения")
-                        .setSelection(Calendar.getInstance().getTimeInMillis());
-
-                MaterialDatePicker<Long> datePicker = datePickerBuilder.build();
-                datePicker.show(getSupportFragmentManager(), datePicker.toString());
-                datePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
-                    @Override
-                    public void onPositiveButtonClick(Long selection) {
-                        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat =
-                                new SimpleDateFormat("dd.MM.yy");
-                        Objects.requireNonNull(mBinding.dateInput.getEditText())
-                                .setText(simpleDateFormat.format(selection));
-                    }
-                });
-            }
+        mBinding.dateInput.setEndIconOnClickListener(v -> {
+            MaterialDatePicker<Long> datePicker = buildDatePicker();
+            datePicker.show(getSupportFragmentManager(), datePicker.toString());
+            datePicker.addOnPositiveButtonClickListener(selection -> {
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat =
+                        new SimpleDateFormat("dd.MM.yy");
+                Objects.requireNonNull(mBinding.dateInput.getEditText())
+                        .setText(simpleDateFormat.format(selection));
+            });
         });
 
         Objects.requireNonNull(mBinding.dateInput.getEditText()).addTextChangedListener(new TextWatcher() {
+
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -75,25 +73,45 @@ public class SubstitutionAddActivity extends AppCompatActivity {
             }
         });
 
+        mBinding.groupEditEdit.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                mViewModel.setGroup(mBinding.groupEditEdit.getEditableText().toString());
+            }
+        });
+
+        mBinding.pairEditEdit.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                mViewModel.setPair(Integer.parseInt(mBinding.pairEditEdit.getEditableText().toString()));
+            }
+        });
     }
 
     private void setupObservers() {
         mViewModel.getTeachersList().observe(this, teachersList -> {
             mBinding.substitutingTeacherEdit.setAdapter(new ArrayAdapter<>(this,
-                    R.layout.support_simple_spinner_dropdown_item, teachersList));
-            Log.d(TAG, "setupObservers: ");
+                                                                           R.layout.support_simple_spinner_dropdown_item, teachersList));
         });
 
         mViewModel.getSubjectsList().observe(this, subjectsList -> {
             mBinding.substitutableSubjectEdit.setAdapter(new ArrayAdapter<>(this,
-                    R.layout.support_simple_spinner_dropdown_item, subjectsList));
+                                                                            R.layout.support_simple_spinner_dropdown_item, subjectsList));
         });
 
-        mViewModel.getDateError().observe(this, dateError -> {
-            if (dateError.isEmpty()) {
-                mBinding.dateInput.setErrorEnabled(false);
+        setupErrorObserver(mViewModel.getPairError(), mBinding.pairEdit);
+        setupErrorObserver(mViewModel.getCabError(), mBinding.cabEdit);
+        setupErrorObserver(mViewModel.getGroupError(), mBinding.groupEdit);
+        setupErrorObserver(mViewModel.getDateError(), mBinding.dateInput);
+
+
+    }
+
+    private void setupErrorObserver(LiveData liveData, TextInputLayout inputLayout) {
+        liveData.observe(this, o -> {
+            String errorString = o.toString();
+            if (errorString.isEmpty()) {
+                inputLayout.setErrorEnabled(false);
             } else {
-                mBinding.dateInput.setError(dateError);
+                inputLayout.setError(errorString);
             }
         });
     }
@@ -103,6 +121,7 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mBinding = ActivitySubstitutionAddBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+        setSupportActionBar(mBinding.toolbar2);
 
         mViewModel = ViewModelProviders.of(this).get(SubstitutionAddViewModel.class);
         mViewModel.init();
@@ -111,5 +130,9 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         setupObservers();
     }
 
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 }
