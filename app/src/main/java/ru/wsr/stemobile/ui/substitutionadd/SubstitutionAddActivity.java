@@ -1,4 +1,4 @@
-package ru.wsr.stemobile;
+package ru.wsr.stemobile.ui.substitutionadd;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -18,8 +18,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Objects;
 
+import ru.wsr.stemobile.R;
 import ru.wsr.stemobile.databinding.ActivitySubstitutionAddBinding;
-import ru.wsr.stemobile.viewmodels.SubstitutionAddViewModel;
+import ru.wsr.stemobile.tools.STEDateValidator;
 
 
 public class SubstitutionAddActivity extends AppCompatActivity {

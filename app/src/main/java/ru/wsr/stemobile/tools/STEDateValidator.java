@@ -1,4 +1,4 @@
-package ru.wsr.stemobile;
+package ru.wsr.stemobile.tools;
 
 import android.os.Parcel;
 

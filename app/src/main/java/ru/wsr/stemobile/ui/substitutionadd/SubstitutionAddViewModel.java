@@ -1,4 +1,4 @@
-package ru.wsr.stemobile.viewmodels;
+package ru.wsr.stemobile.ui.substitutionadd;
 
 import android.annotation.SuppressLint;
 
@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
-import ru.wsr.stemobile.STEDateValidator;
+import ru.wsr.stemobile.tools.STEDateValidator;
 
 public class SubstitutionAddViewModel extends ViewModel {
 

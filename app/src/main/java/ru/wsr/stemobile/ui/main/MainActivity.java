@@ -1,20 +1,22 @@
-package ru.wsr.stemobile;
+package ru.wsr.stemobile.ui.main;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.ViewGroup;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import ru.wsr.stemobile.R;
+import ru.wsr.stemobile.ui.substitutionadd.SubstitutionAddActivity;
 
 public class MainActivity extends AppCompatActivity {
 
