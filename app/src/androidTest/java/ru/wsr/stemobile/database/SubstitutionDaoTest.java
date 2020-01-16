@@ -57,11 +57,16 @@ public class SubstitutionDaoTest {
         List<Substitution> result = LiveDataTestUtil.getValue(
                 mSubstitutionDao.getAllSubstitutions());
         assertNotEquals(0, result.size());
+
+        //Check main fields of Substitution
         assertEquals(result.get(0).getSubstitutionDate(), substitution.getSubstitutionDate());
         assertEquals(result.get(0).getSubject(), substitution.getSubject());
         assertEquals(result.get(0).getTeacher(), substitution.getTeacher());
         assertEquals(result.get(0).getPair(), substitution.getPair());
         assertEquals(result.get(0).getCabinet(), substitution.getCabinet());
+
+        // Check date converter
+        assertEquals(result.get(0).getSubstitutionDate(), substitution.getSubstitutionDate());
     }
 
     @Test
