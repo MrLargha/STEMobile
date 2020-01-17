@@ -24,14 +24,14 @@ import static org.junit.Assert.assertNotEquals;
 
 
 @RunWith(AndroidJUnit4.class)
-public class SubstitutionDaoTest {
+public class STEDaoTest {
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 
 
     private STERoomDatabase mDatabase;
-    private SubstitutionDao mSubstitutionDao;
+    private STEDao mSTEDao;
 
     @Before
     public void connectToDatabase() {
@@ -39,7 +39,7 @@ public class SubstitutionDaoTest {
         mDatabase = Room.inMemoryDatabaseBuilder(context, STERoomDatabase.class)
                 .allowMainThreadQueries()
                 .build();
-        mSubstitutionDao = mDatabase.substitutionDao();
+        mSTEDao = mDatabase.substitutionDao();
     }
 
     @After
@@ -52,10 +52,10 @@ public class SubstitutionDaoTest {
         Substitution substitution = new Substitution("Юрьева И.А", "МДК 01.01",
                 822, 1, new Date(), "522");
 
-        mSubstitutionDao.insertSubstitution(substitution);
+        mSTEDao.insertSubstitution(substitution);
 
         List<Substitution> result = LiveDataTestUtil.getValue(
-                mSubstitutionDao.getAllSubstitutions());
+                mSTEDao.getAllSubstitutions());
         assertNotEquals(0, result.size());
 
         //Check main fields of Substitution
@@ -71,9 +71,9 @@ public class SubstitutionDaoTest {
 
     @Test
     public void dropElementsFromDB() throws Exception {
-        mSubstitutionDao.deleteAll();
+        mSTEDao.deleteAll();
         List<Substitution> result = LiveDataTestUtil.getValue(
-                mSubstitutionDao.getAllSubstitutions());
+                mSTEDao.getAllSubstitutions());
         assertEquals(0, result.size());
     }
 }

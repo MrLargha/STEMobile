@@ -17,7 +17,7 @@ public abstract class STERoomDatabase extends RoomDatabase {
     static final ExecutorService databaseExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
     private static volatile STERoomDatabase INSTANCE;
 
-    static STERoomDatabase getDatabase(final Context context) {
+    public static STERoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                     STERoomDatabase.class,
@@ -26,6 +26,6 @@ public abstract class STERoomDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
-    abstract SubstitutionDao substitutionDao();
+    public abstract STEDao substitutionDao();
 
 }

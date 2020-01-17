@@ -11,7 +11,7 @@ import java.util.List;
 import ru.wsr.stemobile.model.Substitution;
 
 @Dao
-public interface SubstitutionDao {
+public interface STEDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertSubstitution(Substitution substitution);
