@@ -20,7 +20,7 @@ public class STERepository {
         steDao = steRoomDatabase.substitutionDao();
     }
 
-    public STERepository getRepository(final Context context) {
+    public static STERepository getRepository(final Context context) {
         if (INSTANCE == null) {
             INSTANCE = new STERepository(context);
         }

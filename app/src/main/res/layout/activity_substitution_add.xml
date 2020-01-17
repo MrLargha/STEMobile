@@ -234,7 +234,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/substitutingTeacher" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/substitutingSubject"
+                android:id="@+id/substitutableSubject"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -249,7 +249,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/view3">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/substitutingSubjectEdit"
+                    android:id="@+id/substitutableSubjectEdit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
@@ -264,12 +264,12 @@
                 android:layout_marginTop="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/substitutingSubject"
+                app:layout_constraintTop_toBottomOf="@id/substitutableSubject"
                 app:srcCompat="@drawable/ic_expand_more_black_24dp" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/substitutableSubject"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:id="@+id/substitutingSubject"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -283,7 +283,7 @@
                 app:layout_constraintTop_toBottomOf="@id/imageView">
 
                 <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                    android:id="@+id/substitutableSubjectEdit"
+                    android:id="@+id/substitutingSubjectEdit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionDone"
@@ -302,7 +302,7 @@
                 android:layout_marginTop="16dp"
                 android:text="завершить"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/substitutableSubject" />
+                app:layout_constraintTop_toBottomOf="@+id/substitutingSubject" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/addMoreButton"
@@ -313,7 +313,7 @@
                 android:text="добавить ещё"
                 style="@style/Widget.MaterialComponents.Button"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/substitutableSubject" />
+                app:layout_constraintTop_toBottomOf="@+id/substitutingSubject" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

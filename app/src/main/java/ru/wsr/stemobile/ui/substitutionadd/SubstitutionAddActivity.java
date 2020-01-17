@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
@@ -82,8 +83,12 @@ public class SubstitutionAddActivity extends AppCompatActivity {
 
         mBinding.pairEditEdit.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
-                mViewModel.setPair(Integer.parseInt(mBinding.pairEditEdit.getEditableText().toString()));
+                mViewModel.setPair(mBinding.pairEditEdit.getEditableText().toString());
             }
+        });
+
+        mBinding.finishButton.setOnClickListener(v -> {
+            mViewModel.submit();
         });
     }
 
@@ -94,16 +99,25 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         });
 
         mViewModel.getSubjectsList().observe(this, subjectsList -> {
-            mBinding.substitutableSubjectEdit.setAdapter(new ArrayAdapter<>(this,
-                                                                            R.layout.support_simple_spinner_dropdown_item, subjectsList));
+            mBinding.substitutingSubjectEdit.setAdapter(new ArrayAdapter<>(this,
+                                                                           R.layout.support_simple_spinner_dropdown_item, subjectsList));
+        });
+
+        mViewModel.getSubmitError().observe(this, submitError -> {
+            if (!submitError.isEmpty()) {
+                Toast.makeText(SubstitutionAddActivity.this, submitError, Toast.LENGTH_LONG).show();
+            }
         });
 
         setupErrorObserver(mViewModel.getPairError(), mBinding.pairEdit);
         setupErrorObserver(mViewModel.getCabError(), mBinding.cabEdit);
         setupErrorObserver(mViewModel.getGroupError(), mBinding.groupEdit);
         setupErrorObserver(mViewModel.getDateError(), mBinding.dateInput);
+        setupErrorObserver(mViewModel.getTeacherError(), mBinding.substitutingTeacher);
+        setupErrorObserver(mViewModel.getSubjectError(), mBinding.substitutingSubject);
 
-
+        setupTextObserver(mViewModel.getOldSubject(), mBinding.substitutableSubject);
+        setupTextObserver(mViewModel.getOldTeacher(), mBinding.substitutableTeacher);
     }
 
     private void setupErrorObserver(LiveData liveData, TextInputLayout inputLayout) {
@@ -114,6 +128,13 @@ public class SubstitutionAddActivity extends AppCompatActivity {
             } else {
                 inputLayout.setError(errorString);
             }
+        });
+    }
+
+    private void setupTextObserver(LiveData liveData, TextInputLayout textInputLayout) {
+        liveData.observe(this, o -> {
+            String text = o.toString();
+            Objects.requireNonNull(textInputLayout.getEditText()).setText(text);
         });
     }
 
