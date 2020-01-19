@@ -10,24 +10,29 @@ public class SubstitutionAddFormState {
     private @Nullable
     String groupError;
     private @Nullable
-    String pairError;
-    private @Nullable
     String teacherError;
     private @Nullable
     String subjectError;
+
+    @Nullable
+    private String customError;
+
     private boolean hasErrors;
 
-
-    public SubstitutionAddFormState(@Nullable String dateError, @Nullable String cabinetError,
-                                    @Nullable String groupError, @Nullable String pairError,
-                                    @Nullable String teacherError, @Nullable String subjectError,
-                                    boolean hasErrors) {
+    SubstitutionAddFormState(@Nullable String dateError, @Nullable String cabinetError,
+                             @Nullable String groupError, @Nullable String teacherError,
+                             @Nullable String subjectError, @Nullable String customError,
+                             boolean hasErrors) {
         this.dateError = dateError;
         this.cabinetError = cabinetError;
         this.groupError = groupError;
-        this.pairError = pairError;
         this.teacherError = teacherError;
         this.subjectError = subjectError;
+        this.customError = customError;
+        this.hasErrors = hasErrors;
+    }
+
+    public SubstitutionAddFormState(boolean hasErrors) {
         this.hasErrors = hasErrors;
     }
 
@@ -47,11 +52,6 @@ public class SubstitutionAddFormState {
     }
 
     @Nullable
-    public String getPairError() {
-        return pairError;
-    }
-
-    @Nullable
     public String getTeacherError() {
         return teacherError;
     }
@@ -61,7 +61,12 @@ public class SubstitutionAddFormState {
         return subjectError;
     }
 
-    public boolean isHasErrors() {
+    @Nullable
+    public String getCustomError() {
+        return customError;
+    }
+
+    public boolean hasErrors() {
         return hasErrors;
     }
 

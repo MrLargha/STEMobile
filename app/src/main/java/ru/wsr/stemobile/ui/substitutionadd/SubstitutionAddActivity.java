@@ -2,22 +2,18 @@ package ru.wsr.stemobile.ui.substitutionadd;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Objects;
+import java.util.Date;
 
 import ru.wsr.stemobile.R;
 import ru.wsr.stemobile.databinding.ActivitySubstitutionAddBinding;
@@ -44,100 +40,7 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         return datePickerBuilder.build();
     }
 
-    private void setupUIListeners() {
-        mBinding.dateInput.setEndIconOnClickListener(v -> {
-            MaterialDatePicker<Long> datePicker = buildDatePicker();
-            datePicker.show(getSupportFragmentManager(), datePicker.toString());
-            datePicker.addOnPositiveButtonClickListener(selection -> {
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat =
-                        new SimpleDateFormat("dd.MM.yy");
-                Objects.requireNonNull(mBinding.dateInput.getEditText())
-                        .setText(simpleDateFormat.format(selection));
-            });
-        });
-
-        Objects.requireNonNull(mBinding.dateInput.getEditText()).addTextChangedListener(new TextWatcher() {
-
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mViewModel.setDate(mBinding.dateInputEdit.getEditableText().toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        mBinding.groupEditEdit.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                mViewModel.setGroup(mBinding.groupEditEdit.getEditableText().toString());
-            }
-        });
-
-        mBinding.pairEditEdit.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                mViewModel.setPair(mBinding.pairEditEdit.getEditableText().toString());
-            }
-        });
-
-        mBinding.finishButton.setOnClickListener(v -> {
-            mViewModel.submit();
-        });
-    }
-
-    private void setupObservers() {
-        mViewModel.getTeachersList().observe(this, teachersList -> {
-            mBinding.substitutingTeacherEdit.setAdapter(new ArrayAdapter<>(this,
-                                                                           R.layout.support_simple_spinner_dropdown_item, teachersList));
-        });
-
-        mViewModel.getSubjectsList().observe(this, subjectsList -> {
-            mBinding.substitutingSubjectEdit.setAdapter(new ArrayAdapter<>(this,
-                                                                           R.layout.support_simple_spinner_dropdown_item, subjectsList));
-        });
-
-        mViewModel.getSubmitError().observe(this, submitError -> {
-            if (!submitError.isEmpty()) {
-                Toast.makeText(SubstitutionAddActivity.this, submitError, Toast.LENGTH_LONG).show();
-            }
-        });
-
-        setupErrorObserver(mViewModel.getPairError(), mBinding.pairEdit);
-        setupErrorObserver(mViewModel.getCabError(), mBinding.cabEdit);
-        setupErrorObserver(mViewModel.getGroupError(), mBinding.groupEdit);
-        setupErrorObserver(mViewModel.getDateError(), mBinding.dateInput);
-        setupErrorObserver(mViewModel.getTeacherError(), mBinding.substitutingTeacher);
-        setupErrorObserver(mViewModel.getSubjectError(), mBinding.substitutingSubject);
-
-        setupTextObserver(mViewModel.getOldSubject(), mBinding.substitutableSubject);
-        setupTextObserver(mViewModel.getOldTeacher(), mBinding.substitutableTeacher);
-    }
-
-    private void setupErrorObserver(LiveData liveData, TextInputLayout inputLayout) {
-        liveData.observe(this, o -> {
-            String errorString = o.toString();
-            if (errorString.isEmpty()) {
-                inputLayout.setErrorEnabled(false);
-            } else {
-                inputLayout.setError(errorString);
-            }
-        });
-    }
-
-    private void setupTextObserver(LiveData liveData, TextInputLayout textInputLayout) {
-        liveData.observe(this, o -> {
-            String text = o.toString();
-            Objects.requireNonNull(textInputLayout.getEditText()).setText(text);
-        });
-    }
-
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,10 +49,62 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         setSupportActionBar(mBinding.toolbar2);
 
         mViewModel = ViewModelProviders.of(this).get(SubstitutionAddViewModel.class);
-        mViewModel.init();
 
-        setupUIListeners();
-        setupObservers();
+        // Setup error updates
+        mViewModel.getFormState().observe(this, formState -> {
+            mBinding.dateInput.setError(formState.getDateError());
+            mBinding.cabEdit.setError(formState.getCabinetError());
+            mBinding.groupEdit.setError(formState.getGroupError());
+            mBinding.substitutingTeacher.setError(formState.getTeacherError());
+            mBinding.substitutingSubject.setError(formState.getSubjectError());
+            if (formState.hasErrors() && formState.getCustomError() != null) {
+                Snackbar.make(mBinding.coordinator, formState.getCustomError(),
+                        Snackbar.LENGTH_SHORT).setTextColor(getResources().getColor(R.color.colorAccent)).show();
+            } else if (!formState.hasErrors()) {
+                Snackbar.make(mBinding.coordinator, "Замещение добавлено в локальное хранилище",
+                        Snackbar.LENGTH_SHORT).show();
+            }
+        });
+
+        mViewModel.getTeachersList().observe(this, teachersList -> {
+            mBinding.substitutingTeacherEdit.setAdapter(new ArrayAdapter<>(this,
+                    R.layout.support_simple_spinner_dropdown_item, teachersList));
+        });
+
+        mViewModel.getSubjectsList().observe(this, subjectsList -> {
+            mBinding.substitutingSubjectEdit.setAdapter(new ArrayAdapter<>(this,
+                    R.layout.support_simple_spinner_dropdown_item, subjectsList));
+        });
+
+        mBinding.dateInput.setEndIconOnClickListener(v -> {
+            MaterialDatePicker<Long> datePicker = buildDatePicker();
+            datePicker.show(getSupportFragmentManager(), "ru.mrlargha.stemobile.datepicker");
+            datePicker.addOnPositiveButtonClickListener(date -> {
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat
+                        = new SimpleDateFormat("dd.MM.yy");
+                mBinding.dateInputEdit.setText(simpleDateFormat.format(new Date(date)));
+            });
+        });
+
+        mBinding.substitutingSubject.setStartIconOnClickListener(v -> {
+            if (mBinding.substitutingSubjectEdit.getEditableText().toString().isEmpty()) {
+                mBinding.substitutingSubjectEdit.getEditableText().append("МДК ");
+            } else {
+                mBinding.substitutingSubjectEdit.setText("МДК " +
+                        mBinding.substitutingSubjectEdit.getText().toString());
+            }
+        });
+
+        mBinding.finishButton.setOnClickListener(v -> {
+            mViewModel.submitSubstitution(mBinding.dateInputEdit.getEditableText().toString(),
+                    String.valueOf(mBinding.pairToggleGroup.getCheckedButtonId()),
+                    mBinding.groupEditEdit.getEditableText().toString(),
+                    mBinding.cabEditEdit.getEditableText().toString(),
+                    mBinding.substitutingTeacherEdit.getEditableText().toString(),
+                    mBinding.substitutingSubjectEdit.getEditableText().toString());
+        });
+
+        mBinding.pairToggleGroup.check(1);
     }
 
     @Override
