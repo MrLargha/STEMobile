@@ -87,7 +87,8 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         });
 
         mBinding.substitutingSubject.setStartIconOnClickListener(v -> {
-            if (mBinding.substitutingSubjectEdit.getEditableText().toString().isEmpty()) {
+            if (mBinding.substitutingSubjectEdit.getEditableText().toString().isEmpty()
+                    || !mBinding.substitutingSubjectEdit.getEditableText().toString().equals("МДК ")) {
                 mBinding.substitutingSubjectEdit.getEditableText().append("МДК ");
             } else {
                 mBinding.substitutingSubjectEdit.setText("МДК " +
