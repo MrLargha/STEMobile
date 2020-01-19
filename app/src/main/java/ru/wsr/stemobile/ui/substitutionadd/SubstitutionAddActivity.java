@@ -40,7 +40,7 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         return datePickerBuilder.build();
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "ResourceType"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,10 +87,9 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         });
 
         mBinding.substitutingSubject.setStartIconOnClickListener(v -> {
-            if (mBinding.substitutingSubjectEdit.getEditableText().toString().isEmpty()
-                    || !mBinding.substitutingSubjectEdit.getEditableText().toString().equals("МДК ")) {
+            if (mBinding.substitutingSubjectEdit.getText().toString().isEmpty()) {
                 mBinding.substitutingSubjectEdit.getEditableText().append("МДК ");
-            } else {
+            } else if (!mBinding.substitutingSubjectEdit.getEditableText().toString().equals("МДК ")) {
                 mBinding.substitutingSubjectEdit.setText("МДК " +
                         mBinding.substitutingSubjectEdit.getText().toString());
             }
