@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 import ru.wsr.stemobile.LiveDataTestUtil;
-import ru.wsr.stemobile.model.Substitution;
+import ru.wsr.stemobile.data.model.Substitution;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

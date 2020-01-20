@@ -1,4 +1,4 @@
-package ru.wsr.stemobile.repository;
+package ru.wsr.stemobile.data;
 
 import android.content.Context;
 
@@ -6,9 +6,9 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
+import ru.wsr.stemobile.data.model.Substitution;
 import ru.wsr.stemobile.database.STEDao;
 import ru.wsr.stemobile.database.STERoomDatabase;
-import ru.wsr.stemobile.model.Substitution;
 
 public class STERepository {
     private static STERepository INSTANCE;
@@ -28,7 +28,9 @@ public class STERepository {
     }
 
     public void insertSubstitutionToDB(Substitution substitution) {
-        steDao.insertSubstitution(substitution);
+        STERoomDatabase.getDatabaseExecutor().execute(() -> {
+            steDao.insertSubstitution(substitution);
+        });
     }
 
     public LiveData<List<Substitution>> getAllSubstitutions() {

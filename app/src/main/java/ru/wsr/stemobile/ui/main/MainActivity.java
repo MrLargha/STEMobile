@@ -1,8 +1,8 @@
 package ru.wsr.stemobile.ui.main;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,50 +10,57 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import java.util.ArrayList;
 
 import ru.wsr.stemobile.R;
+import ru.wsr.stemobile.data.model.Substitution;
+import ru.wsr.stemobile.databinding.ActivityMainBinding;
+import ru.wsr.stemobile.databinding.SubstitutionRecViewBinding;
 import ru.wsr.stemobile.ui.substitutionadd.SubstitutionAddActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    private MainViewModel mViewModel;
+    private ActivityMainBinding mBinding;
+    private SubstitutionAdapter mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(mBinding.getRoot());
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @TargetApi(16)
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this, SubstitutionAddActivity.class);
-                startActivity(i);
+        setSupportActionBar(mBinding.toolbar);
 
-            }
+        mBinding.fab.setOnClickListener(view -> {
+            Intent i = new Intent(MainActivity.this, SubstitutionAddActivity.class);
+            startActivity(i);
+        });
+
+        mAdapter = new SubstitutionAdapter();
+
+        mBinding.content.substitutionsRecylcler.setAdapter(mAdapter);
+        mBinding.content.substitutionsRecylcler.setLayoutManager(new LinearLayoutManager(this));
+
+        mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mViewModel.getSubstitutionsList().observe(this, list -> {
+            mAdapter.setSubstitutions(new ArrayList<>(list));
         });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -61,27 +68,50 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private static class SubstitutionAdapter extends RecyclerView.Adapter<SubstitutionAdapter.SubstitutionViewHolder>{
+    private class SubstitutionAdapter extends RecyclerView.Adapter<SubstitutionAdapter.SubstitutionViewHolder> {
+
+        private ArrayList<Substitution> substitutions;
+
         @NonNull
         @Override
         public SubstitutionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return null;
+            Log.d("stemobile", "onCreateViewHolder: new created");
+            View v = SubstitutionRecViewBinding
+                    .inflate(getLayoutInflater(), parent, false).getRoot();
+            return new SubstitutionViewHolder(v);
         }
 
         @Override
         public void onBindViewHolder(@NonNull SubstitutionViewHolder holder, int position) {
-
+            Substitution substitution = substitutions.get(position);
+            holder.binding.pair.setText(String.valueOf(substitution.getPair()));
+            holder.binding.cabinet.setText("к. " + substitution.getCabinet());
+            holder.binding.group.setText(String.valueOf(substitution.getGroup()));
+            holder.binding.subject.setText(substitution.getSubject());
+            holder.binding.teacher.setText(substitution.getTeacher());
         }
 
         @Override
         public int getItemCount() {
-            return 0;
+            if (substitutions != null) {
+                return substitutions.size();
+            } else {
+                return 0;
+            }
         }
 
-        private static class SubstitutionViewHolder extends RecyclerView.ViewHolder{
+        void setSubstitutions(ArrayList<Substitution> substitutions) {
+            this.substitutions = substitutions;
+            notifyDataSetChanged();
+        }
 
-            public SubstitutionViewHolder(@NonNull View itemView) {
+        private class SubstitutionViewHolder extends RecyclerView.ViewHolder {
+
+            SubstitutionRecViewBinding binding;
+
+            SubstitutionViewHolder(@NonNull View itemView) {
                 super(itemView);
+                binding = SubstitutionRecViewBinding.bind(itemView);
             }
         }
     }

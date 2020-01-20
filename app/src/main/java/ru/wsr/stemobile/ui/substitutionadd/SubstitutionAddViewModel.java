@@ -1,6 +1,5 @@
 package ru.wsr.stemobile.ui.substitutionadd;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -8,13 +7,14 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
-import ru.wsr.stemobile.repository.STERepository;
+import ru.wsr.stemobile.data.STERepository;
+import ru.wsr.stemobile.data.model.Substitution;
+import ru.wsr.stemobile.tools.DateFormatter;
 import ru.wsr.stemobile.tools.STEDateValidator;
 
 public class SubstitutionAddViewModel extends AndroidViewModel {
@@ -45,7 +45,7 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
                 if (date.length() != 8) {
                     return false;
                 }
-                @SuppressLint("SimpleDateFormat") Date parsedDate = new SimpleDateFormat("dd.MM.yy").parse(date);
+                Date parsedDate = DateFormatter.stringToDate(date);
                 return new STEDateValidator(Calendar.getInstance().getTimeInMillis()).isValid(parsedDate.getTime());
             } catch (ParseException | NullPointerException e) {
                 return false;
@@ -91,7 +91,16 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
             builder.setCustomError("Выберите номер пары");
         }
         if (!builder.hasErrors()) {
-            // TODO insert into DB
+            try {
+                Substitution substitution =
+                        new Substitution(teacher, subject, Integer.parseInt(group),
+                                         Integer.parseInt(pair), DateFormatter.stringToDate(date),
+                                         cabinet);
+                steRepository.insertSubstitutionToDB(substitution);
+            } catch (ParseException e) {
+                // TODO: Remove this shit
+                builder.setDateError("Неверный формат даты.");
+            }
         }
         formState.setValue(builder.createSubstitutionAddFormState());
     }
@@ -100,7 +109,7 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
         return subjectsList;
     }
 
-    public MutableLiveData<SubstitutionAddFormState> getFormState() {
+    MutableLiveData<SubstitutionAddFormState> getFormState() {
         return formState;
     }
 

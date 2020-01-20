@@ -1,4 +1,4 @@
-package ru.wsr.stemobile.model;
+package ru.wsr.stemobile.data.model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -14,7 +14,7 @@ import ru.wsr.stemobile.database.DateConverter;
 @Entity(tableName = "substitutions_table")
 public class Substitution {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "uid")
     private int mID;
 

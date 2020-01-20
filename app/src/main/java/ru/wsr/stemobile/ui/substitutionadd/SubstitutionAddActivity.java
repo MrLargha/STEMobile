@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.snackbar.Snackbar;
@@ -59,21 +60,21 @@ public class SubstitutionAddActivity extends AppCompatActivity {
             mBinding.substitutingSubject.setError(formState.getSubjectError());
             if (formState.hasErrors() && formState.getCustomError() != null) {
                 Snackbar.make(mBinding.coordinator, formState.getCustomError(),
-                        Snackbar.LENGTH_SHORT).setTextColor(getResources().getColor(R.color.colorAccent)).show();
+                              Snackbar.LENGTH_SHORT).setTextColor(getResources().getColor(R.color.colorAccent)).show();
             } else if (!formState.hasErrors()) {
                 Snackbar.make(mBinding.coordinator, "Замещение добавлено в локальное хранилище",
-                        Snackbar.LENGTH_SHORT).show();
+                              Snackbar.LENGTH_SHORT).show();
             }
         });
 
         mViewModel.getTeachersList().observe(this, teachersList -> {
             mBinding.substitutingTeacherEdit.setAdapter(new ArrayAdapter<>(this,
-                    R.layout.support_simple_spinner_dropdown_item, teachersList));
+                                                                           R.layout.support_simple_spinner_dropdown_item, teachersList));
         });
 
         mViewModel.getSubjectsList().observe(this, subjectsList -> {
             mBinding.substitutingSubjectEdit.setAdapter(new ArrayAdapter<>(this,
-                    R.layout.support_simple_spinner_dropdown_item, subjectsList));
+                                                                           R.layout.support_simple_spinner_dropdown_item, subjectsList));
         });
 
         mBinding.dateInput.setEndIconOnClickListener(v -> {
@@ -91,17 +92,18 @@ public class SubstitutionAddActivity extends AppCompatActivity {
                 mBinding.substitutingSubjectEdit.getEditableText().append("МДК ");
             } else if (!mBinding.substitutingSubjectEdit.getEditableText().toString().equals("МДК ")) {
                 mBinding.substitutingSubjectEdit.setText("МДК " +
-                        mBinding.substitutingSubjectEdit.getText().toString());
+                                                                 mBinding.substitutingSubjectEdit.getText().toString());
             }
         });
 
         mBinding.finishButton.setOnClickListener(v -> {
+
             mViewModel.submitSubstitution(mBinding.dateInputEdit.getEditableText().toString(),
-                    String.valueOf(mBinding.pairToggleGroup.getCheckedButtonId()),
-                    mBinding.groupEditEdit.getEditableText().toString(),
-                    mBinding.cabEditEdit.getEditableText().toString(),
-                    mBinding.substitutingTeacherEdit.getEditableText().toString(),
-                    mBinding.substitutingSubjectEdit.getEditableText().toString());
+                                          ((MaterialButton) findViewById(mBinding.pairToggleGroup.getCheckedButtonId())).getText().toString(),
+                                          mBinding.groupEditEdit.getEditableText().toString(),
+                                          mBinding.cabEditEdit.getEditableText().toString(),
+                                          mBinding.substitutingTeacherEdit.getEditableText().toString(),
+                                          mBinding.substitutingSubjectEdit.getEditableText().toString());
         });
 
         mBinding.pairToggleGroup.check(1);

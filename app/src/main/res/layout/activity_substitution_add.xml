@@ -85,6 +85,7 @@
                 app:singleSelection="true">
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/pair1"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -93,6 +94,7 @@
                     android:text="1" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/pair2"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -100,6 +102,7 @@
                     android:text="2" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/pair3"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -107,6 +110,7 @@
                     android:text="3" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/pair4"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
