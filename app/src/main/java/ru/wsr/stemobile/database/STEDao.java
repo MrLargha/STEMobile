@@ -12,7 +12,7 @@ import ru.wsr.stemobile.data.model.Substitution;
 @Dao
 public interface STEDao {
 
-    @Insert
+    @Insert()
     void insertSubstitution(Substitution substitution);
 
     @Query("SELECT * FROM substitutions_table ORDER BY uid")

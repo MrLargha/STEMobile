@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         mViewModel.getSubstitutionsList().observe(this, list -> {
-            mAdapter.setSubstitutions(new ArrayList<>(list));
+            mAdapter.setElements(new ArrayList<>(list));
         });
     }
 

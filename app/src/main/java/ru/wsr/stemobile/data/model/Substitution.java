@@ -80,4 +80,9 @@ public class Substitution {
     public void setID(int ID) {
         mID = ID;
     }
+
+    public boolean equals(Substitution comparable) {
+        return comparable.getPair() == pair && comparable.getSubstitutionDate().equals(substitutionDate)
+                && comparable.getGroup() == group;
+    }
 }
