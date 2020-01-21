@@ -76,7 +76,7 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     void setElements(ArrayList<Substitution> elements) {
         if (!elements.isEmpty()) {
-            SubstitutionsSort.sortSubstitutions(elements);
+//            SubstitutionsSort.sortSubstitutions(elements);
             elements = SubstitutionsSort.moveOldDatesToEnd(elements, new Date());
 
             ArrayList<Object> resultSet = new ArrayList<>();

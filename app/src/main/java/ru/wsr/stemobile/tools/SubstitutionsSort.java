@@ -8,6 +8,8 @@ import java.util.Date;
 import ru.wsr.stemobile.data.model.Substitution;
 
 public class SubstitutionsSort {
+    // Use sorting by 'order by' in SQL QUERY instead this shit!
+    @Deprecated
     public static ArrayList<Substitution> sortSubstitutions(ArrayList<Substitution> substitutions) {
         Collections.sort(substitutions, (o1, o2) -> {
             if (o1.getSubstitutionDate().equals(o2.getSubstitutionDate())) {
