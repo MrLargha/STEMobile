@@ -68,7 +68,7 @@
             android:layout_height="1dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@android:color/darker_gray" />
+            android:background="#C5C5C5" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -116,5 +116,40 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             tools:text="МДК 01.01" />
 
+        <!--        <View-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="1dp"-->
+        <!--            android:layout_marginStart="8dp"-->
+        <!--            android:layout_marginEnd="8dp"-->
+        <!--            android:background="#C5C5C5" />-->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="\u2022 Синхронизировано"
+                android:textColor="#8BC34A"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Богданов Андрей"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>
