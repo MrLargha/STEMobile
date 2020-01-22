@@ -1,5 +1,6 @@
 package ru.wsr.stemobile.ui.main;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,17 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             substitutionViewHolder.binding.group.setText(String.valueOf(substitution.getGroup()));
             substitutionViewHolder.binding.subject.setText(substitution.getSubject());
             substitutionViewHolder.binding.teacher.setText(substitution.getTeacher());
+            if (substitution.getStatus().equals(Substitution.STATUS_SYNCHRONIZED)) {
+                substitutionViewHolder.binding.status.setText("\u2022 Синхронизировано");
+                substitutionViewHolder.binding.status.setTextColor(Color.GREEN);
+            } else if (substitution.getStatus().equals(Substitution.STATUS_NOT_SYNCHRONIZED)) {
+                substitutionViewHolder.binding.status.setText("\u2022 Не синхронизировано");
+                substitutionViewHolder.binding.status.setTextColor(Color.rgb(255, 132, 0));
+            } else {
+                substitutionViewHolder.binding.status.setText("\u2022 Ошибка синхронизации");
+                substitutionViewHolder.binding.status.setTextColor(Color.RED);
+            }
+            substitutionViewHolder.binding.name.setText("Богданов Андрей");
         } else {
             DividerViewHolder dividerViewHolder = (DividerViewHolder) holder;
             Calendar c = Calendar.getInstance();
@@ -78,7 +90,6 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (!elements.isEmpty()) {
 //            SubstitutionsSort.sortSubstitutions(elements);
             elements = SubstitutionsSort.moveOldDatesToEnd(elements, new Date());
-
             ArrayList<Object> resultSet = new ArrayList<>();
 
             Date date = elements.get(0).getSubstitutionDate();

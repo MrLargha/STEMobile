@@ -14,6 +14,7 @@
 
     <style name="STEToolbarTheme" parent="AppTheme">
         <item name="android:textColorSecondary">@color/colorOnPrimary</item>
+        <item name="android:textColorPrimary">@color/colorOnPrimary</item>
     </style>
 
 

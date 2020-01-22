@@ -14,6 +14,11 @@ import ru.wsr.stemobile.database.DateConverter;
 @Entity(tableName = "substitutions_table")
 public class Substitution {
 
+    public static final String STATUS_NOT_SYNCHRONIZED = "NOT_SYNCHRONIZED";
+    public static final String STATUS_SYNCHRONIZED = "SYNCHRONIZED";
+    public static final String STATUS_ERROR = "ERROR";
+
+
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "uid")
     private int mID;
@@ -27,6 +32,9 @@ public class Substitution {
     private int pair;
 
     @NotNull
+    private String status;
+
+    @NotNull
     private String cabinet;
 
     @NotNull
@@ -36,13 +44,15 @@ public class Substitution {
     private String subject;
 
     public Substitution(@NotNull String teacher, @NotNull String subject,
-                        int group, int pair, @NotNull Date substitutionDate, @NotNull String cabinet) {
+                        int group, int pair, @NotNull Date substitutionDate,
+                        @NotNull String cabinet, @NotNull String status) {
         this.teacher = teacher;
         this.subject = subject;
         this.group = group;
         this.pair = pair;
         this.substitutionDate = substitutionDate;
         this.cabinet = cabinet;
+        this.status = status;
     }
 
     @NotNull
@@ -84,5 +94,9 @@ public class Substitution {
     public boolean equals(Substitution comparable) {
         return comparable.getPair() == pair && comparable.getSubstitutionDate().equals(substitutionDate)
                 && comparable.getGroup() == group;
+    }
+
+    public String getStatus() {
+        return status;
     }
 }

@@ -95,7 +95,7 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
                 Substitution substitution =
                         new Substitution(teacher, subject, Integer.parseInt(group),
                                          Integer.parseInt(pair), DateFormatter.stringToDate(date),
-                                         cabinet);
+                                         cabinet, Substitution.STATUS_NOT_SYNCHRONIZED);
                 steRepository.insertSubstitutionToDB(substitution);
             } catch (ParseException e) {
                 // TODO: Remove this shit

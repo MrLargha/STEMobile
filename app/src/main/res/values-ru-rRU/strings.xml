@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">STEMobile</string>
+    <string name="action_settings">Настройки</string>
+    <string name="title_activity_login">Войти</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="action_sign_in_short">Войти</string>
+    <string name="action_sign_in">Войти или зарегистрироваться</string>
+    <string name="welcome">Добро пожаловать!</string>
+    <string name="invalid_username">Неверное имя пользователя</string>
+    <string name="login_failed">Ошибка авторизации</string>
+    <string name="invalid_password">Пароль не может быть меньше 5 символов</string>
+</resources>
