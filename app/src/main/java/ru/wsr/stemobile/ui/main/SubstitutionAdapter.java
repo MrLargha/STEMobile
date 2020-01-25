@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -25,6 +26,12 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private ArrayList<Object> elements;
 
+    private SelectionTracker selectionTracker;
+
+    public void setSelectionTracker(SelectionTracker selectionTracker) {
+        this.selectionTracker = selectionTracker;
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,24 +49,9 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == TYPE_SUBSTITUTION) {
-            SubstitutionViewHolder substitutionViewHolder = (SubstitutionViewHolder) holder;
             Substitution substitution = (Substitution) elements.get(position);
-            substitutionViewHolder.binding.pair.setText(String.valueOf(substitution.getPair()));
-            substitutionViewHolder.binding.cabinet.setText("к. " + substitution.getCabinet());
-            substitutionViewHolder.binding.group.setText(String.valueOf(substitution.getGroup()));
-            substitutionViewHolder.binding.subject.setText(substitution.getSubject());
-            substitutionViewHolder.binding.teacher.setText(substitution.getTeacher());
-            if (substitution.getStatus().equals(Substitution.STATUS_SYNCHRONIZED)) {
-                substitutionViewHolder.binding.status.setText("\u2022 Синхронизировано");
-                substitutionViewHolder.binding.status.setTextColor(Color.GREEN);
-            } else if (substitution.getStatus().equals(Substitution.STATUS_NOT_SYNCHRONIZED)) {
-                substitutionViewHolder.binding.status.setText("\u2022 Не синхронизировано");
-                substitutionViewHolder.binding.status.setTextColor(Color.rgb(255, 132, 0));
-            } else {
-                substitutionViewHolder.binding.status.setText("\u2022 Ошибка синхронизации");
-                substitutionViewHolder.binding.status.setTextColor(Color.RED);
-            }
-            substitutionViewHolder.binding.name.setText("Богданов Андрей");
+            ((SubstitutionAdapter.SubstitutionViewHolder) holder)
+                    .bind(substitution, selectionTracker.isSelected(substitution));
         } else {
             DividerViewHolder dividerViewHolder = (DividerViewHolder) holder;
             Calendar c = Calendar.getInstance();
@@ -88,7 +80,6 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     void setElements(ArrayList<Substitution> elements) {
         if (!elements.isEmpty()) {
-//            SubstitutionsSort.sortSubstitutions(elements);
             elements = SubstitutionsSort.moveOldDatesToEnd(elements, new Date());
             ArrayList<Object> resultSet = new ArrayList<>();
 
@@ -104,6 +95,8 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             this.elements = resultSet;
             notifyDataSetChanged();
+
+
         }
     }
 
@@ -131,6 +124,26 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return new SubstitutionItemDetail(getAdapterPosition(),
                                               (Substitution) SubstitutionAdapter.this.elements
                                                       .get(getAdapterPosition()));
+        }
+
+        void bind(Substitution substitution, boolean selected) {
+            binding.pair.setText(String.valueOf(substitution.getPair()));
+            binding.cabinet.setText("к. " + substitution.getCabinet());
+            binding.group.setText(String.valueOf(substitution.getGroup()));
+            binding.subject.setText(substitution.getSubject());
+            binding.teacher.setText(substitution.getTeacher());
+            if (substitution.getStatus().equals(Substitution.STATUS_SYNCHRONIZED)) {
+                binding.status.setText("\u2022 Синхронизировано");
+                binding.status.setTextColor(Color.GREEN);
+            } else if (substitution.getStatus().equals(Substitution.STATUS_NOT_SYNCHRONIZED)) {
+                binding.status.setText("\u2022 Не синхронизировано");
+                binding.status.setTextColor(Color.rgb(255, 132, 0));
+            } else {
+                binding.status.setText("\u2022 Ошибка синхронизации");
+                binding.status.setTextColor(Color.RED);
+            }
+            this.binding.name.setText("Богданов Андрей");
+            itemView.setActivated(selected);
         }
     }
 }

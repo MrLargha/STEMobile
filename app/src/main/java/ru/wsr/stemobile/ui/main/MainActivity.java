@@ -2,11 +2,14 @@ package ru.wsr.stemobile.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.selection.SelectionTracker;
+import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
@@ -36,13 +39,24 @@ public class MainActivity extends AppCompatActivity {
 
         mAdapter = new SubstitutionAdapter();
 
-        mBinding.content.substitutionsRecylcler.setAdapter(mAdapter);
         mBinding.content.substitutionsRecylcler.setLayoutManager(new LinearLayoutManager(this));
+        mBinding.content.substitutionsRecylcler.setAdapter(mAdapter);
 
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         mViewModel.getSubstitutionsList().observe(this, list -> {
             mAdapter.setElements(new ArrayList<>(list));
         });
+
+        SelectionTracker selectionTracker = new SelectionTracker.Builder<>(
+                "my-selection-id",
+                mBinding.content.substitutionsRecylcler,
+                new SubstitutionKeyProvider(1, new ArrayList<>()),
+                new SubstitutionLookup(mBinding.content.substitutionsRecylcler),
+                StorageStrategy.createLongStorage()
+        ).withOnDragInitiatedListener(e -> {
+            Log.d("stemobile", "DRAG!!!");
+            return true;
+        }).build();
     }
 
     @Override
