@@ -43,20 +43,25 @@ public class MainActivity extends AppCompatActivity {
         mBinding.content.substitutionsRecylcler.setAdapter(mAdapter);
 
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        SubstitutionKeyProvider substitutionKeyProvider =
+                new SubstitutionKeyProvider(1, new ArrayList<>());
         mViewModel.getSubstitutionsList().observe(this, list -> {
             mAdapter.setElements(new ArrayList<>(list));
+            substitutionKeyProvider.setItemsList(new ArrayList<>(list));
         });
 
         SelectionTracker selectionTracker = new SelectionTracker.Builder<>(
                 "my-selection-id",
                 mBinding.content.substitutionsRecylcler,
-                new SubstitutionKeyProvider(1, new ArrayList<>()),
+                substitutionKeyProvider,
                 new SubstitutionLookup(mBinding.content.substitutionsRecylcler),
                 StorageStrategy.createLongStorage()
         ).withOnDragInitiatedListener(e -> {
             Log.d("stemobile", "DRAG!!!");
             return true;
         }).build();
+
+        mAdapter.setSelectionTracker(selectionTracker);
     }
 
     @Override

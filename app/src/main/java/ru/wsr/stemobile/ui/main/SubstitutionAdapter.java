@@ -95,8 +95,6 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             this.elements = resultSet;
             notifyDataSetChanged();
-
-
         }
     }
 

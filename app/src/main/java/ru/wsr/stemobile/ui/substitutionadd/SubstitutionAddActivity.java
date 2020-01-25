@@ -50,7 +50,6 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         setSupportActionBar(mBinding.toolbar2);
 
         mViewModel = ViewModelProviders.of(this).get(SubstitutionAddViewModel.class);
-
         // Setup error updates
         mViewModel.getFormState().observe(this, formState -> {
             mBinding.dateInput.setError(formState.getDateError());
@@ -97,7 +96,6 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         });
 
         mBinding.finishButton.setOnClickListener(v -> {
-
             mViewModel.submitSubstitution(mBinding.dateInputEdit.getEditableText().toString(),
                                           ((MaterialButton) findViewById(mBinding.pairToggleGroup.getCheckedButtonId())).getText().toString(),
                                           mBinding.groupEditEdit.getEditableText().toString(),
@@ -106,6 +104,7 @@ public class SubstitutionAddActivity extends AppCompatActivity {
                                           mBinding.substitutingSubjectEdit.getEditableText().toString());
         });
 
+        // TODO Replace!!!!
         mBinding.pairToggleGroup.check(1);
     }
 

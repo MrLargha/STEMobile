@@ -53,7 +53,7 @@ public class STEDaoTest {
     @Test
     public void insertSubstitutionAndCheckIt() throws Exception {
         Substitution substitution = new Substitution("Юрьева И.А", "МДК 01.01",
-                                                     822, 1, new Date(), "522");
+                                                     822, 1, new Date(), "522", Substitution.STATUS_NOT_SYNCHRONIZED);
 
         mSTEDao.insertSubstitution(substitution);
 

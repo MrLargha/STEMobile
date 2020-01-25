@@ -20,7 +20,7 @@ public class SubstitutionsSortTest {
             for (int g = 1; g < 3; g++) {
                 for (int p = 1; p < 3; p++) {
                     original.add(new Substitution("Any teacher", "Any subject",
-                            800 + g, p, c.getTime(), "Cabinet: 404"));
+                                                  800 + g, p, c.getTime(), "Cabinet: 404", Substitution.STATUS_NOT_SYNCHRONIZED));
                 }
             }
             c.add(Calendar.DAY_OF_YEAR, 1);
@@ -41,7 +41,7 @@ public class SubstitutionsSortTest {
             for (int g = 1; g < 3; g++) {
                 for (int p = 1; p < 3; p++) {
                     original.add(new Substitution("Any teacher", "Any subject",
-                            800 + g, p, c.getTime(), "Cabinet: 404"));
+                                                  800 + g, p, c.getTime(), "Cabinet: 404", Substitution.STATUS_NOT_SYNCHRONIZED));
                 }
             }
             if (i < 4)

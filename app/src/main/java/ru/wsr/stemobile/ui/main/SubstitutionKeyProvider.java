@@ -10,6 +10,10 @@ import ru.wsr.stemobile.data.model.Substitution;
 
 public class SubstitutionKeyProvider extends ItemKeyProvider {
 
+    public void setItemsList(ArrayList<Substitution> itemsList) {
+        this.itemsList = itemsList;
+    }
+
     private ArrayList<Substitution> itemsList;
 
     protected SubstitutionKeyProvider(int scope, ArrayList<Substitution> itemsList) {
