@@ -107,16 +107,6 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    static class SubstitutionViewHolder extends RecyclerView.ViewHolder {
-
-        SubstitutionRecViewBinding binding;
-
-        SubstitutionViewHolder(@NonNull View itemView) {
-            super(itemView);
-            binding = SubstitutionRecViewBinding.bind(itemView);
-        }
-    }
-
     static class DividerViewHolder extends RecyclerView.ViewHolder {
 
         SubstitutionDateDividerBinding binding;
@@ -124,6 +114,23 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         DividerViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = SubstitutionDateDividerBinding.bind(itemView);
+        }
+
+    }
+
+    class SubstitutionViewHolder extends RecyclerView.ViewHolder {
+
+        SubstitutionRecViewBinding binding;
+
+        SubstitutionViewHolder(@NonNull View itemView) {
+            super(itemView);
+            binding = SubstitutionRecViewBinding.bind(itemView);
+        }
+
+        SubstitutionItemDetail getItemDetails() {
+            return new SubstitutionItemDetail(getAdapterPosition(),
+                                              (Substitution) SubstitutionAdapter.this.elements
+                                                      .get(getAdapterPosition()));
         }
     }
 }
