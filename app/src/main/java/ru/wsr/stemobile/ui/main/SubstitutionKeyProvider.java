@@ -4,32 +4,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.ItemKeyProvider;
 
-import java.util.ArrayList;
-
 import ru.wsr.stemobile.data.model.Substitution;
 
-public class SubstitutionKeyProvider extends ItemKeyProvider {
+public class SubstitutionKeyProvider extends ItemKeyProvider<Long> {
 
-    public void setItemsList(ArrayList<Substitution> itemsList) {
-        this.itemsList = itemsList;
-    }
+    private final SubstitutionAdapter mAdapter;
 
-    private ArrayList<Substitution> itemsList;
-
-    protected SubstitutionKeyProvider(int scope, ArrayList<Substitution> itemsList) {
+    SubstitutionKeyProvider(int scope, SubstitutionAdapter adapter) {
         super(scope);
-        this.itemsList = itemsList;
+        mAdapter = adapter;
     }
 
     @Nullable
     @Override
-    public Object getKey(int position) {
-        return itemsList.get(position);
+    public Long getKey(int position) {
+        return (long) ((Substitution) mAdapter.getElements().get(position)).getID();
     }
 
     @Override
-    public int getPosition(@NonNull Object key) {
-        //noinspection SuspiciousMethodCalls
-        return itemsList.indexOf(key);
+    public int getPosition(@NonNull Long key) {
+        return mAdapter.getPositionByKey(key);
     }
 }

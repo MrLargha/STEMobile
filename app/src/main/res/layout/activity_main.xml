@@ -19,7 +19,9 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="@style/STEToolbarTheme"
+            app:layout_scrollFlags="scroll|snap"
             app:titleTextColor="@color/colorOnPrimary" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView

@@ -26,7 +26,6 @@ public class SubstitutionAddActivity extends AppCompatActivity {
     private ActivitySubstitutionAddBinding mBinding;
     private SubstitutionAddViewModel mViewModel;
 
-    private final String TAG = "ru.mrlargha.stemobile";
 
     private MaterialDatePicker<Long> buildDatePicker() {
         CalendarConstraints.Builder calendarConstraintsBuilder = new CalendarConstraints.Builder();
@@ -41,7 +40,6 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         return datePickerBuilder.build();
     }
 
-    @SuppressLint({"SetTextI18n", "ResourceType"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,15 +64,11 @@ public class SubstitutionAddActivity extends AppCompatActivity {
             }
         });
 
-        mViewModel.getTeachersList().observe(this, teachersList -> {
-            mBinding.substitutingTeacherEdit.setAdapter(new ArrayAdapter<>(this,
-                                                                           R.layout.support_simple_spinner_dropdown_item, teachersList));
-        });
+        mViewModel.getTeachersList().observe(this, teachersList -> mBinding.substitutingTeacherEdit.setAdapter(new ArrayAdapter<>(this,
+                R.layout.support_simple_spinner_dropdown_item, teachersList)));
 
-        mViewModel.getSubjectsList().observe(this, subjectsList -> {
-            mBinding.substitutingSubjectEdit.setAdapter(new ArrayAdapter<>(this,
-                                                                           R.layout.support_simple_spinner_dropdown_item, subjectsList));
-        });
+        mViewModel.getSubjectsList().observe(this, subjectsList -> mBinding.substitutingSubjectEdit.setAdapter(new ArrayAdapter<>(this,
+                R.layout.support_simple_spinner_dropdown_item, subjectsList)));
 
         mBinding.dateInput.setEndIconOnClickListener(v -> {
             MaterialDatePicker<Long> datePicker = buildDatePicker();
@@ -95,17 +89,13 @@ public class SubstitutionAddActivity extends AppCompatActivity {
             }
         });
 
-        mBinding.finishButton.setOnClickListener(v -> {
-            mViewModel.submitSubstitution(mBinding.dateInputEdit.getEditableText().toString(),
-                                          ((MaterialButton) findViewById(mBinding.pairToggleGroup.getCheckedButtonId())).getText().toString(),
-                                          mBinding.groupEditEdit.getEditableText().toString(),
-                                          mBinding.cabEditEdit.getEditableText().toString(),
-                                          mBinding.substitutingTeacherEdit.getEditableText().toString(),
-                                          mBinding.substitutingSubjectEdit.getEditableText().toString());
-        });
-
-        // TODO Replace!!!!
-        mBinding.pairToggleGroup.check(1);
+        mBinding.finishButton.setOnClickListener(v -> mViewModel.submitSubstitution(mBinding.dateInputEdit.getEditableText().toString(),
+                ((MaterialButton) findViewById(mBinding.pairToggleGroup.getCheckedButtonId())).getText().toString(),
+                mBinding.groupEditEdit.getEditableText().toString(),
+                mBinding.cabEditEdit.getEditableText().toString(),
+                mBinding.substitutingTeacherEdit.getEditableText().toString(),
+                mBinding.substitutingSubjectEdit.getEditableText().toString()));
+        mBinding.pairToggleGroup.check(R.id.pair1);
     }
 
     @Override

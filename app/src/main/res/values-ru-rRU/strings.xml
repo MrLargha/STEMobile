@@ -10,4 +10,5 @@
     <string name="invalid_username">Неверное имя пользователя</string>
     <string name="login_failed">Ошибка авторизации</string>
     <string name="invalid_password">Пароль не может быть меньше 5 символов</string>
+    <string name="delete">Удалить</string>
 </resources>

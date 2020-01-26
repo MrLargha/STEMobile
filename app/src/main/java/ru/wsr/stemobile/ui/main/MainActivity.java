@@ -6,7 +6,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.StorageStrategy;
@@ -23,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private MainViewModel mViewModel;
     private ActivityMainBinding mBinding;
     private SubstitutionAdapter mAdapter;
+    private ActionMode mActionMode;
+    private SelectionTracker mSelectionTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,13 +48,12 @@ public class MainActivity extends AppCompatActivity {
 
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         SubstitutionKeyProvider substitutionKeyProvider =
-                new SubstitutionKeyProvider(1, new ArrayList<>());
+                new SubstitutionKeyProvider(1, mAdapter);
         mViewModel.getSubstitutionsList().observe(this, list -> {
             mAdapter.setElements(new ArrayList<>(list));
-            substitutionKeyProvider.setItemsList(new ArrayList<>(list));
         });
 
-        SelectionTracker selectionTracker = new SelectionTracker.Builder<>(
+        mSelectionTracker = new SelectionTracker.Builder<>(
                 "my-selection-id",
                 mBinding.content.substitutionsRecylcler,
                 substitutionKeyProvider,
@@ -61,7 +64,32 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }).build();
 
-        mAdapter.setSelectionTracker(selectionTracker);
+        if (savedInstanceState != null) {
+            mSelectionTracker.onRestoreInstanceState(savedInstanceState);
+        }
+
+        mSelectionTracker.addObserver(new SelectionTracker.SelectionObserver() {
+            @Override
+            public void onSelectionChanged() {
+                if (mSelectionTracker.hasSelection() && mActionMode == null) {
+                    Log.d("stemobile", "onSelectionChanged: " +
+                            mSelectionTracker.getSelection().size());
+                    mActionMode = startSupportActionMode(new SubstitutionActionModeCallback(
+                            MainActivity.this, mSelectionTracker));
+                } else if (!mSelectionTracker.hasSelection() && mActionMode != null) {
+                    mActionMode.finish();
+                    mActionMode = null;
+                }
+            }
+        });
+
+        mAdapter.setSelectionTracker(mSelectionTracker);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mSelectionTracker.onSaveInstanceState(outState);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package ru.wsr.stemobile.ui.main;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -20,6 +21,7 @@ public class MainViewModel extends AndroidViewModel {
         super(application);
         steRepository = STERepository.getRepository(application.getApplicationContext());
         substitutionsList = steRepository.getAllSubstitutions();
+        Log.d("stemobile", "MainViewModel: requested substitutions");
     }
 
     LiveData<List<Substitution>> getSubstitutionsList() {

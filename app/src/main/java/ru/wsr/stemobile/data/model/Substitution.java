@@ -1,5 +1,8 @@
 package ru.wsr.stemobile.data.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -12,7 +15,7 @@ import java.util.Date;
 import ru.wsr.stemobile.database.DateConverter;
 
 @Entity(tableName = "substitutions_table")
-public class Substitution {
+public class Substitution implements Parcelable {
 
     public static final String STATUS_NOT_SYNCHRONIZED = "NOT_SYNCHRONIZED";
     public static final String STATUS_SYNCHRONIZED = "SYNCHRONIZED";
@@ -98,5 +101,15 @@ public class Substitution {
 
     public String getStatus() {
         return status;
+    }
+
+    @Override
+    public int describeContents() {
+        return mID;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(mID);
     }
 }

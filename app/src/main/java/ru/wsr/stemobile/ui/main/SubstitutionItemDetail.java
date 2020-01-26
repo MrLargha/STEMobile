@@ -3,14 +3,12 @@ package ru.wsr.stemobile.ui.main;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.ItemDetailsLookup;
 
-import ru.wsr.stemobile.data.model.Substitution;
-
-public class SubstitutionItemDetail extends ItemDetailsLookup.ItemDetails {
+public class SubstitutionItemDetail extends ItemDetailsLookup.ItemDetails<Long> {
 
     private final int adapterPosition;
-    private final Substitution selectionKey;
+    private final Long selectionKey;
 
-    public SubstitutionItemDetail(int adapterPosition, Substitution selectionKey) {
+    public SubstitutionItemDetail(int adapterPosition, Long selectionKey) {
         this.adapterPosition = adapterPosition;
         this.selectionKey = selectionKey;
     }
@@ -22,7 +20,7 @@ public class SubstitutionItemDetail extends ItemDetailsLookup.ItemDetails {
 
     @Nullable
     @Override
-    public Object getSelectionKey() {
+    public Long getSelectionKey() {
         return selectionKey;
     }
 }

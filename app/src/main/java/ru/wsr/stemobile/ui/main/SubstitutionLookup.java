@@ -9,17 +9,17 @@ import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-public class SubstitutionLookup extends ItemDetailsLookup {
+public class SubstitutionLookup extends ItemDetailsLookup<Long> {
 
     private final RecyclerView recyclerView;
 
-    public SubstitutionLookup(RecyclerView recyclerView) {
+    SubstitutionLookup(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
     }
 
     @Nullable
     @Override
-    public ItemDetails getItemDetails(@NonNull MotionEvent e) {
+    public SubstitutionItemDetail getItemDetails(@NonNull MotionEvent e) {
         View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
         if (view != null) {
             RecyclerView.ViewHolder viewHolder = recyclerView.getChildViewHolder(view);

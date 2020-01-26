@@ -24,11 +24,19 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int TYPE_SUBSTITUTION = 1;
     private static final int TYPE_DIVIDER = 2;
 
+    private SelectionTracker<Long> selectionTracker;
+
     private ArrayList<Object> elements;
 
-    private SelectionTracker selectionTracker;
+    SubstitutionAdapter() {
+        setHasStableIds(true);
+    }
 
-    public void setSelectionTracker(SelectionTracker selectionTracker) {
+    public ArrayList<Object> getElements() {
+        return elements;
+    }
+
+    void setSelectionTracker(SelectionTracker<Long> selectionTracker) {
         this.selectionTracker = selectionTracker;
     }
 
@@ -47,11 +55,16 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == TYPE_SUBSTITUTION) {
             Substitution substitution = (Substitution) elements.get(position);
             ((SubstitutionAdapter.SubstitutionViewHolder) holder)
-                    .bind(substitution, selectionTracker.isSelected(substitution));
+                    .bind(substitution, selectionTracker.isSelected((long) substitution.getID()));
         } else {
             DividerViewHolder dividerViewHolder = (DividerViewHolder) holder;
             Calendar c = Calendar.getInstance();
@@ -76,6 +89,18 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemViewType(int position) {
         return elements.get(position) instanceof Substitution ? TYPE_SUBSTITUTION : TYPE_DIVIDER;
+    }
+
+    int getPositionByKey(long key) {
+        if (elements != null)
+            for (Object element : elements) {
+                if (element instanceof Substitution) {
+                    if (((Substitution) element).getID() == key) {
+                        return elements.indexOf(element);
+                    }
+                }
+            }
+        return -1;
     }
 
     void setElements(ArrayList<Substitution> elements) {
@@ -120,8 +145,8 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         SubstitutionItemDetail getItemDetails() {
             return new SubstitutionItemDetail(getAdapterPosition(),
-                                              (Substitution) SubstitutionAdapter.this.elements
-                                                      .get(getAdapterPosition()));
+                    (long) ((Substitution) SubstitutionAdapter.this.elements
+                            .get(getAdapterPosition())).getID());
         }
 
         void bind(Substitution substitution, boolean selected) {
