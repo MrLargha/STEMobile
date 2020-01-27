@@ -28,4 +28,7 @@ public interface STEDao {
     @Query("SELECT * FROM substitutions_table WHERE `group`= :group AND pair = :pair" +
             " AND substitutionDate=:date")
     LiveData<List<Substitution>> getSubstitutions(int group, int pair, Date date);
+
+    @Query("DELETE FROM substitutions_table WHERE uid = :uid")
+    void deleteByUID(long uid);
 }

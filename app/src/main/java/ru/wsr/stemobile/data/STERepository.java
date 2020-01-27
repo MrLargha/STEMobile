@@ -28,9 +28,12 @@ public class STERepository {
     }
 
     public void insertSubstitutionToDB(Substitution substitution) {
-        STERoomDatabase.getDatabaseExecutor().execute(() -> {
-            steDao.insertSubstitution(substitution);
-        });
+        STERoomDatabase.getDatabaseExecutor().execute(() -> steDao.insertSubstitution(substitution));
+    }
+
+    public void deleteSubstitution(long uid) {
+        STERoomDatabase.getDatabaseExecutor().execute(() -> steDao.deleteByUID(uid));
+
     }
 
     public LiveData<List<Substitution>> getAllSubstitutions() {

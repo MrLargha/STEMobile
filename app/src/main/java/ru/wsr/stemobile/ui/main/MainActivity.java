@@ -87,6 +87,10 @@ public class MainActivity extends AppCompatActivity {
         mAdapter.setSelectionTracker(mSelectionTracker);
     }
 
+    public void deleteSubstitutions(ArrayList<Long> ids) {
+
+    }
+
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);

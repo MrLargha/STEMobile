@@ -1,21 +1,22 @@
 package ru.wsr.stemobile.ui.main;
 
-import android.content.Context;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.view.ActionMode;
 import androidx.recyclerview.selection.SelectionTracker;
 
+import java.util.ArrayList;
+
 import ru.wsr.stemobile.R;
 
 
 public class SubstitutionActionModeCallback implements ActionMode.Callback {
 
-    private final Context context;
+    private final MainActivity context;
     private final SelectionTracker selectionTracker;
 
-    SubstitutionActionModeCallback(Context context, SelectionTracker selectionTracker) {
+    SubstitutionActionModeCallback(MainActivity context, SelectionTracker selectionTracker) {
         this.context = context;
         this.selectionTracker = selectionTracker;
     }
@@ -35,8 +36,14 @@ public class SubstitutionActionModeCallback implements ActionMode.Callback {
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         if (item.getItemId() != R.id.menu_delete) {
             selectionTracker.clearSelection();
-            mode.finish();
+        } else {
+            ArrayList<Long> savedSubstitutions = new ArrayList<>();
+            for (Object uid : selectionTracker.getSelection()) {
+                savedSubstitutions.add((long) uid);
+            }
+            context.deleteSubstitutions(savedSubstitutions);
         }
+        mode.finish();
         return true;
     }
 
