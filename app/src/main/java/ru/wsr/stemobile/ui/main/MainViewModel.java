@@ -3,6 +3,7 @@ package ru.wsr.stemobile.ui.main;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -17,6 +18,8 @@ import ru.wsr.stemobile.data.model.LoggedInUser;
 import ru.wsr.stemobile.data.model.Substitution;
 
 public class MainViewModel extends AndroidViewModel {
+    private static final String TAG = "stemobile";
+
     private STERepository steRepository;
 
     private LiveData<List<Substitution>> substitutionsList;
@@ -26,16 +29,19 @@ public class MainViewModel extends AndroidViewModel {
     private ArrayList<Substitution> savedSubstitutions = new ArrayList<>();
 
     private MutableLiveData<Boolean> vkAuthorizationRequired = new MutableLiveData<>(false);
+
     private MutableLiveData<LoggedInUser> loggedUser = new MutableLiveData<>(null);
+
 
     public MainViewModel(@NonNull Application application) {
         super(application);
+        Log.d(TAG, "MainViewModel: created");
         steRepository = STERepository.getRepository(application.getApplicationContext());
         substitutionsList = steRepository.getAllSubstitutions();
 
         SharedPreferences sharedPreferences = application.getSharedPreferences("SP_NAME", Context.MODE_PRIVATE);
-        String token;
-        if (!sharedPreferences.getString("STE_API_TOKEN", "").isEmpty()) {
+        String token = sharedPreferences.getString("STE_API_TOKEN", "");
+        if (!token.isEmpty()) {
 
         }
     }

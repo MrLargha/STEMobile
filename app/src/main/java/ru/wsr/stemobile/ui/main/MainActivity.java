@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         mBinding.content.substitutionsRecylcler.setLayoutManager(new LinearLayoutManager(this));
         mBinding.content.substitutionsRecylcler.setAdapter(mAdapter);
 
-        mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         SubstitutionKeyProvider substitutionKeyProvider =
                 new SubstitutionKeyProvider(1, mAdapter);
         mViewModel.getSubstitutionsList().observe(this, list ->
@@ -105,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
         mViewModel.getVkAuthorizationRequired().observe(this, b -> {
             if (b) {
                 // TODO: Start VK Authorization activity
-
             }
         });
     }

@@ -12,4 +12,7 @@
     <string name="login_failed">"Login failed"</string>
     <string name="delete">Delete</string>
     <string name="mdk">\"МДК \"</string>
+
+    <integer name="com_vk_sdk_AppId">7299059</integer>
+
 </resources>

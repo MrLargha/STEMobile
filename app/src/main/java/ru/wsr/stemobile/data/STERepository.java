@@ -1,6 +1,7 @@
 package ru.wsr.stemobile.data;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
@@ -11,6 +12,8 @@ import ru.wsr.stemobile.database.STEDao;
 import ru.wsr.stemobile.database.STERoomDatabase;
 
 public class STERepository {
+    private static final String TAG = "stemobile";
+
     private static STERepository INSTANCE;
 
     private STEDao steDao;
@@ -20,6 +23,7 @@ public class STERepository {
     private STERepository(final Context context) {
         STERoomDatabase steRoomDatabase = STERoomDatabase.getDatabase(context);
         steDao = steRoomDatabase.substitutionDao();
+        Log.d(TAG, "STERepository: created");
     }
 
     public static STERepository getRepository(final Context context) {
