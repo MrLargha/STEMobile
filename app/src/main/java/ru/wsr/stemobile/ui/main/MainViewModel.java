@@ -1,7 +1,8 @@
 package ru.wsr.stemobile.ui.main;
 
 import android.app.Application;
-import android.util.Log;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -31,11 +32,12 @@ public class MainViewModel extends AndroidViewModel {
         super(application);
         steRepository = STERepository.getRepository(application.getApplicationContext());
         substitutionsList = steRepository.getAllSubstitutions();
-        Log.d("stemobile", "MainViewModel: requested substitutions");
-    }
 
-    LiveData<List<Substitution>> getSubstitutionsList() {
-        return substitutionsList;
+        SharedPreferences sharedPreferences = application.getSharedPreferences("SP_NAME", Context.MODE_PRIVATE);
+        String token;
+        if (!sharedPreferences.getString("STE_API_TOKEN", "").isEmpty()) {
+
+        }
     }
 
     void deleteSubstitutions(ArrayList<Long> ids) {
@@ -91,7 +93,11 @@ public class MainViewModel extends AndroidViewModel {
         return vkAuthorizationRequired;
     }
 
-    public MutableLiveData<LoggedInUser> getLoggedUser() {
+    LiveData<List<Substitution>> getSubstitutionsList() {
+        return substitutionsList;
+    }
+
+    MutableLiveData<LoggedInUser> getLoggedUser() {
         return loggedUser;
     }
 }
