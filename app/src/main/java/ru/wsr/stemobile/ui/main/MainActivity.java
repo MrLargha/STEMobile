@@ -14,6 +14,9 @@ import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 
 import ru.wsr.stemobile.R;
@@ -85,10 +88,24 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mAdapter.setSelectionTracker(mSelectionTracker);
+
+        mViewModel.getUndoString().observe(this, s -> {
+            if (!s.isEmpty()) {
+                Snackbar.make(mBinding.getRoot(),
+                              s, Snackbar.LENGTH_LONG).setAction("Отменить",
+                                                                 v -> mViewModel.undoLocalDeletion())
+                        .addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                            @Override
+                            public void onDismissed(Snackbar transientBottomBar, int event) {
+                                mViewModel.clearDeletionCache();
+                            }
+                        }).show();
+            }
+        });
     }
 
     public void deleteSubstitutions(ArrayList<Long> ids) {
-
+        mViewModel.deleteSubstitutions(ids);
     }
 
     @Override

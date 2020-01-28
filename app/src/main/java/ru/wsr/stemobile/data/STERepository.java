@@ -12,12 +12,13 @@ import ru.wsr.stemobile.database.STERoomDatabase;
 
 public class STERepository {
     private static STERepository INSTANCE;
-    private STERoomDatabase steRoomDatabase;
     private STEDao steDao;
+    private LiveData<List<Substitution>> substitutionsLiveData;
 
     private STERepository(final Context context) {
-        steRoomDatabase = STERoomDatabase.getDatabase(context);
+        STERoomDatabase steRoomDatabase = STERoomDatabase.getDatabase(context);
         steDao = steRoomDatabase.substitutionDao();
+        substitutionsLiveData = steDao.getAllSubstitutions();
     }
 
     public static STERepository getRepository(final Context context) {
@@ -33,10 +34,9 @@ public class STERepository {
 
     public void deleteSubstitution(long uid) {
         STERoomDatabase.getDatabaseExecutor().execute(() -> steDao.deleteByUID(uid));
-
     }
 
     public LiveData<List<Substitution>> getAllSubstitutions() {
-        return steDao.getAllSubstitutions();
+        return substitutionsLiveData;
     }
 }
