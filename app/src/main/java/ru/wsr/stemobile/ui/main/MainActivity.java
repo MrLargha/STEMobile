@@ -101,6 +101,13 @@ public class MainActivity extends AppCompatActivity {
                         }).show();
             }
         });
+
+        mViewModel.getVkAuthorizationRequired().observe(this, b -> {
+            if (b) {
+                // TODO: Start VK Authorization activity
+
+            }
+        });
     }
 
     public void deleteSubstitutions(ArrayList<Long> ids) {

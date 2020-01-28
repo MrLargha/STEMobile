@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.wsr.stemobile.data.STERepository;
+import ru.wsr.stemobile.data.model.LoggedInUser;
 import ru.wsr.stemobile.data.model.Substitution;
 
 public class MainViewModel extends AndroidViewModel {
@@ -22,6 +23,9 @@ public class MainViewModel extends AndroidViewModel {
     private MutableLiveData<String> undoString = new MutableLiveData<>();
 
     private ArrayList<Substitution> savedSubstitutions = new ArrayList<>();
+
+    private MutableLiveData<Boolean> vkAuthorizationRequired = new MutableLiveData<>(false);
+    private MutableLiveData<LoggedInUser> loggedUser = new MutableLiveData<>(null);
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -77,5 +81,17 @@ public class MainViewModel extends AndroidViewModel {
     void clearDeletionCache() {
         savedSubstitutions.clear();
         undoString.setValue("");
+    }
+
+    void authByVkToken(String vk_token) {
+        // TODO: Call authorization method in repository and save result
+    }
+
+    MutableLiveData<Boolean> getVkAuthorizationRequired() {
+        return vkAuthorizationRequired;
+    }
+
+    public MutableLiveData<LoggedInUser> getLoggedUser() {
+        return loggedUser;
     }
 }

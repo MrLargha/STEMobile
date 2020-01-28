@@ -12,13 +12,14 @@ import ru.wsr.stemobile.database.STERoomDatabase;
 
 public class STERepository {
     private static STERepository INSTANCE;
+
     private STEDao steDao;
-    private LiveData<List<Substitution>> substitutionsLiveData;
+
+    private LoginDataSource dataSource;
 
     private STERepository(final Context context) {
         STERoomDatabase steRoomDatabase = STERoomDatabase.getDatabase(context);
         steDao = steRoomDatabase.substitutionDao();
-        substitutionsLiveData = steDao.getAllSubstitutions();
     }
 
     public static STERepository getRepository(final Context context) {
@@ -37,6 +38,6 @@ public class STERepository {
     }
 
     public LiveData<List<Substitution>> getAllSubstitutions() {
-        return substitutionsLiveData;
+        return steDao.getAllSubstitutions();
     }
 }
