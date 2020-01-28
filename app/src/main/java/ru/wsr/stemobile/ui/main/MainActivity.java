@@ -53,9 +53,8 @@ public class MainActivity extends AppCompatActivity {
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         SubstitutionKeyProvider substitutionKeyProvider =
                 new SubstitutionKeyProvider(1, mAdapter);
-        mViewModel.getSubstitutionsList().observe(this, list -> {
-            mAdapter.setElements(new ArrayList<>(list));
-        });
+        mViewModel.getSubstitutionsList().observe(this, list ->
+                mAdapter.setElements(new ArrayList<>(list)));
 
         mSelectionTracker = new SelectionTracker.Builder<>(
                 "my-selection-id",

@@ -1,6 +1,7 @@
 package ru.wsr.stemobile.ui.main;
 
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,24 +105,39 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     void setElements(ArrayList<Substitution> elements) {
-        if (!elements.isEmpty()) {
-            elements = SubstitutionsSort.moveOldDatesToEnd(elements, new Date());
+        new SortTask().execute(elements);
+    }
+
+    private class SortTask extends AsyncTask<ArrayList<Substitution>, ArrayList<Object>, ArrayList<Object>> {
+
+        @Override
+        protected ArrayList<Object> doInBackground(ArrayList<Substitution>... arrayLists) {
+            ArrayList<Substitution> elements = arrayLists[0];
             ArrayList<Object> resultSet = new ArrayList<>();
+            if (!elements.isEmpty()) {
+                elements = SubstitutionsSort.moveOldDatesToEnd(elements, new Date());
 
-            Date date = elements.get(0).getSubstitutionDate();
-            resultSet.add(elements.get(0).getSubstitutionDate());
-            for (int i = 0; i < elements.size(); i++) {
-                if (!elements.get(i).getSubstitutionDate().equals(date)) {
-                    date = elements.get(i).getSubstitutionDate();
-                    resultSet.add(date);
+                Date date = elements.get(0).getSubstitutionDate();
+                resultSet.add(elements.get(0).getSubstitutionDate());
+                for (int i = 0; i < elements.size(); i++) {
+                    if (!elements.get(i).getSubstitutionDate().equals(date)) {
+                        date = elements.get(i).getSubstitutionDate();
+                        resultSet.add(date);
+                    }
+                    resultSet.add(elements.get(i));
                 }
-                resultSet.add(elements.get(i));
             }
+            return resultSet;
+        }
 
-            this.elements = resultSet;
+        @Override
+        protected void onPostExecute(ArrayList<Object> substitutions) {
+            super.onPostExecute(substitutions);
+            SubstitutionAdapter.this.elements = substitutions;
             notifyDataSetChanged();
         }
     }
+
 
     static class DividerViewHolder extends RecyclerView.ViewHolder {
 
