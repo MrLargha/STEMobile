@@ -11,4 +11,5 @@
     <string name="login_failed">Ошибка авторизации</string>
     <string name="invalid_password">Пароль не может быть меньше 5 символов</string>
     <string name="delete">Удалить</string>
+    <string name="mdk">\"МДК \"</string>
 </resources>

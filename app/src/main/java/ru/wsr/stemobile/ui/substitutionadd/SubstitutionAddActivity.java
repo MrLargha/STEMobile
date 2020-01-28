@@ -84,8 +84,8 @@ public class SubstitutionAddActivity extends AppCompatActivity {
             if (mBinding.substitutingSubjectEdit.getText().toString().isEmpty()) {
                 mBinding.substitutingSubjectEdit.getEditableText().append("МДК ");
             } else if (!mBinding.substitutingSubjectEdit.getEditableText().toString().equals("МДК ")) {
-                mBinding.substitutingSubjectEdit.setText("МДК " +
-                                                                 mBinding.substitutingSubjectEdit.getText().toString());
+                mBinding.substitutingSubjectEdit.setText(String.format("%s%s", getString(R.string.mdk),
+                                                                       mBinding.substitutingSubjectEdit.getText().toString()));
             }
         });
 
