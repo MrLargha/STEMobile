@@ -17,8 +17,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.vk.api.sdk.VK;
+import com.vk.api.sdk.auth.VKAccessToken;
+import com.vk.api.sdk.auth.VKAuthCallback;
+import com.vk.api.sdk.auth.VKScope;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import ru.mrlargha.stemobile.R;
 import ru.mrlargha.stemobile.databinding.ActivityMainBinding;
@@ -107,7 +113,9 @@ public class MainActivity extends AppCompatActivity {
         mViewModel.getVkAuthorizationRequired().observe(this, authorizationRequired -> {
             if (authorizationRequired) {
                 Log.d(TAG, "onCreate: starting authorization threw VK");
-                VK.login(this);
+                LinkedList<VKScope> scopes = new LinkedList<>();
+                scopes.add(VKScope.OFFLINE);
+                VK.login(this, scopes);
             }
         });
     }
@@ -120,6 +128,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mSelectionTracker.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (!VK.onActivityResult(requestCode, resultCode, data, new VKAuthCallback() {
+            @Override
+            public void onLoginFailed(int i) {
+
+            }
+
+            @Override
+            public void onLogin(@NotNull VKAccessToken vkAccessToken) {
+                Log.d(TAG, "onLogin: token=" + vkAccessToken.getAccessToken());
+            }
+        })) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
