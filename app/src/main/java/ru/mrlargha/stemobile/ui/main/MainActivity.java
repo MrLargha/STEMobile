@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 import ru.mrlargha.stemobile.R;
 import ru.mrlargha.stemobile.databinding.ActivityMainBinding;
-import ru.mrlargha.stemobile.ui.login.LoginActivity;
 import ru.mrlargha.stemobile.ui.substitutionadd.SubstitutionAddActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,23 +35,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
+
         super.onCreate(savedInstanceState);
+
         mBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
-
         setSupportActionBar(mBinding.toolbar);
+
+        mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         mBinding.fab.setOnClickListener(view -> {
             Intent i = new Intent(MainActivity.this, SubstitutionAddActivity.class);
             startActivity(i);
         });
 
-        mAdapter = new SubstitutionAdapter();
 
+        mAdapter = new SubstitutionAdapter();
         mBinding.content.substitutionsRecylcler.setLayoutManager(new LinearLayoutManager(this));
         mBinding.content.substitutionsRecylcler.setAdapter(mAdapter);
 
-        mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         SubstitutionKeyProvider substitutionKeyProvider =
                 new SubstitutionKeyProvider(1, mAdapter);
         mViewModel.getSubstitutionsList().observe(this, list ->
@@ -101,12 +102,6 @@ public class MainActivity extends AppCompatActivity {
                                 mViewModel.clearDeletionCache();
                             }
                         }).show();
-            }
-        });
-
-        mViewModel.getAuthorizationRequired().observe(this, required -> {
-            if (required) {
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
             }
         });
     }

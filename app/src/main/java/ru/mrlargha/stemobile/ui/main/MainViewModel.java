@@ -1,8 +1,6 @@
 package ru.mrlargha.stemobile.ui.main;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -14,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.mrlargha.stemobile.data.STERepository;
-import ru.mrlargha.stemobile.data.model.LoggedInUser;
 import ru.mrlargha.stemobile.data.model.Substitution;
 
 public class MainViewModel extends AndroidViewModel {
@@ -28,22 +25,12 @@ public class MainViewModel extends AndroidViewModel {
 
     private ArrayList<Substitution> savedSubstitutions = new ArrayList<>();
 
-    private MutableLiveData<Boolean> authorizationRequired = new MutableLiveData<>(false);
-
-    private MutableLiveData<LoggedInUser> loggedUser = new MutableLiveData<>(null);
-
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         Log.d(TAG, "MainViewModel: created");
         steRepository = STERepository.getRepository(application.getApplicationContext());
         substitutionsList = steRepository.getAllSubstitutions();
-
-        SharedPreferences sharedPreferences = application.getSharedPreferences("SP_NAME", Context.MODE_PRIVATE);
-        String token = sharedPreferences.getString("STE_API_TOKEN", "");
-        if (token.isEmpty()) {
-            authorizationRequired.setValue(true);
-        }
     }
 
     void deleteSubstitutions(ArrayList<Long> ids) {
@@ -91,19 +78,8 @@ public class MainViewModel extends AndroidViewModel {
         undoString.setValue("");
     }
 
-    void authByVkToken(String vk_token) {
-        // TODO: Call authorization method in repository and save result
-    }
-
-    MutableLiveData<Boolean> getAuthorizationRequired() {
-        return authorizationRequired;
-    }
-
     LiveData<List<Substitution>> getSubstitutionsList() {
         return substitutionsList;
     }
 
-    MutableLiveData<LoggedInUser> getLoggedUser() {
-        return loggedUser;
-    }
 }
