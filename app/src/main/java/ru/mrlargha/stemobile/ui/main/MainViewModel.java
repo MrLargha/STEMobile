@@ -28,7 +28,7 @@ public class MainViewModel extends AndroidViewModel {
 
     private ArrayList<Substitution> savedSubstitutions = new ArrayList<>();
 
-    private MutableLiveData<Boolean> vkAuthorizationRequired = new MutableLiveData<>(false);
+    private MutableLiveData<Boolean> authorizationRequired = new MutableLiveData<>(false);
 
     private MutableLiveData<LoggedInUser> loggedUser = new MutableLiveData<>(null);
 
@@ -42,7 +42,7 @@ public class MainViewModel extends AndroidViewModel {
         SharedPreferences sharedPreferences = application.getSharedPreferences("SP_NAME", Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("STE_API_TOKEN", "");
         if (token.isEmpty()) {
-            vkAuthorizationRequired.setValue(true);
+            authorizationRequired.setValue(true);
         }
     }
 
@@ -95,8 +95,8 @@ public class MainViewModel extends AndroidViewModel {
         // TODO: Call authorization method in repository and save result
     }
 
-    MutableLiveData<Boolean> getVkAuthorizationRequired() {
-        return vkAuthorizationRequired;
+    MutableLiveData<Boolean> getAuthorizationRequired() {
+        return authorizationRequired;
     }
 
     LiveData<List<Substitution>> getSubstitutionsList() {

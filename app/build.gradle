@@ -45,6 +45,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation 'androidx.arch.core:core-testing:2.1.0'
-    implementation 'at.stefangeyer.challonge.rest:retrofit:2.0.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.2.0'
     implementation 'com.vk:androidsdk:2.2.1'
 }

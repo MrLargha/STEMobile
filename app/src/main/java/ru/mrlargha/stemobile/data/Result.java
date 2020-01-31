@@ -1,6 +1,9 @@
 package ru.mrlargha.stemobile.data;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Result<T> {
+    @NotNull
     @Override
     public String toString() {
         if (this instanceof Result.Success) {
