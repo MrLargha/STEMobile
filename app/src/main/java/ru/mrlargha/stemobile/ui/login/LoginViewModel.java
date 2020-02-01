@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel;
 import ru.mrlargha.stemobile.R;
 import ru.mrlargha.stemobile.data.LoginRepository;
 import ru.mrlargha.stemobile.data.Result;
-import ru.mrlargha.stemobile.data.model.LoggedInUser;
+import ru.mrlargha.stemobile.data.model.LoginServerReply;
 
 public class LoginViewModel extends ViewModel {
 
@@ -61,20 +61,20 @@ public class LoginViewModel extends ViewModel {
         return password != null && password.trim().length() > 5;
     }
 
-    private class LoginTask extends AsyncTask<String, Void, Result<LoggedInUser>> {
+    private class LoginTask extends AsyncTask<String, Void, Result<LoginServerReply>> {
 
         @Override
-        protected Result<LoggedInUser> doInBackground(String... strings) {
+        protected Result<LoginServerReply> doInBackground(String... strings) {
             return loginRepository.login(strings[0], strings[1]);
         }
 
         @Override
-        protected void onPostExecute(Result<LoggedInUser> loggedInUserResult) {
+        protected void onPostExecute(Result<LoginServerReply> loggedInUserResult) {
             if (loggedInUserResult instanceof Result.Success) {
-                LoggedInUser data = ((Result.Success<LoggedInUser>) loggedInUserResult).getData();
+                LoginServerReply data = ((Result.Success<LoginServerReply>) loggedInUserResult).getData();
                 loginResult.setValue(new LoginResult(new LoggedInUserView(data.getName())));
             } else {
-                loginResult.setValue(new LoginResult(R.string.login_failed));
+                loginResult.setValue(new LoginResult(((Result.Error) loggedInUserResult).getErrorString()));
             }
         }
     }

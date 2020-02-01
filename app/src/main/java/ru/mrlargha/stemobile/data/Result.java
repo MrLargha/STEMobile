@@ -11,7 +11,7 @@ public class Result<T> {
             return "Success[data=" + success.getData().toString() + "]";
         } else if (this instanceof Result.Error) {
             Result.Error error = (Result.Error) this;
-            return "Error[exception=" + error.getError().toString() + "]";
+            return "Error[exception=" + error.getErrorString() + "]";
         }
         return "";
     }
@@ -31,14 +31,14 @@ public class Result<T> {
 
     // Error sub-class
     public final static class Error extends Result {
-        private Exception error;
+        private String errorString;
 
-        public Error(Exception error) {
-            this.error = error;
+        public Error(String errorString) {
+            this.errorString = errorString;
         }
 
-        public Exception getError() {
-            return this.error;
+        public String getErrorString() {
+            return this.errorString;
         }
     }
 }

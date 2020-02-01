@@ -1,6 +1,6 @@
 package ru.mrlargha.stemobile.data;
 
-import ru.mrlargha.stemobile.data.model.LoggedInUser;
+import ru.mrlargha.stemobile.data.model.LoginServerReply;
 
 
 public class LoginRepository {
@@ -11,7 +11,7 @@ public class LoginRepository {
 
     // If user credentials will be cached in local storage, it is recommended it be encrypted
     // @see https://developer.android.com/training/articles/keystore
-    private LoggedInUser user = null;
+    private LoginServerReply user = null;
 
     private LoginRepository(LoginDataSource dataSource) {
         this.dataSource = dataSource;
@@ -33,14 +33,14 @@ public class LoginRepository {
         dataSource.logout();
     }
 
-    private void setLoggedInUser(LoggedInUser user) {
+    private void setLoggedInUser(LoginServerReply user) {
         this.user = user;
     }
 
-    public Result<LoggedInUser> login(String username, String password) {
-        Result<LoggedInUser> result = dataSource.login(username, password);
+    public Result<LoginServerReply> login(String username, String password) {
+        Result<LoginServerReply> result = dataSource.login(username, password);
         if (result instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
+            setLoggedInUser(((Result.Success<LoginServerReply>) result).getData());
         }
         return result;
     }
