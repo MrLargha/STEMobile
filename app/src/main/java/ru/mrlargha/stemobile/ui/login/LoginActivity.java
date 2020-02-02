@@ -1,6 +1,7 @@
 package ru.mrlargha.stemobile.ui.login;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,6 +19,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import ru.mrlargha.stemobile.R;
+import ru.mrlargha.stemobile.data.model.LoginServerReply;
 import ru.mrlargha.stemobile.ui.main.MainActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -28,14 +30,14 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
-                .get(LoginViewModel.class);
+        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
         final TextInputEditText usernameEditText = findViewById(R.id.vk_id_input);
         final TextInputEditText passwordEditText = findViewById(R.id.password_input);
         final TextInputLayout passwordLayout = findViewById(R.id.password);
         final TextInputLayout usernameLayout = findViewById(R.id.vk_id);
         final MaterialButton loginButton = findViewById(R.id.login);
+        final MaterialButton registerButton = findViewById(R.id.register);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
         loginViewModel.getLoginFormState().observe(this, loginFormState -> {
@@ -43,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
             loginButton.setEnabled(loginFormState.isDataValid());
+            registerButton.setEnabled(loginFormState.isDataValid());
             if (loginFormState.getUsernameError() != null) {
                 usernameLayout.setError(getString(loginFormState.getUsernameError()));
             }
@@ -63,6 +66,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             if (loginResult.getSuccess() != null) {
                 updateUiWithUser(loginResult.getSuccess());
+                finish();
             }
         });
 
@@ -99,6 +103,12 @@ public class LoginActivity extends AppCompatActivity {
                     passwordEditText.getText().toString());
         });
 
+        registerButton.setOnClickListener(v -> {
+            loadingProgressBar.setVisibility(View.VISIBLE);
+            loginViewModel.register(usernameEditText.getText().toString(),
+                    passwordEditText.getText().toString());
+        });
+
         passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (event != null && (actionId == EditorInfo.IME_ACTION_SEARCH
                     || actionId == EditorInfo.IME_ACTION_DONE
@@ -109,11 +119,21 @@ public class LoginActivity extends AppCompatActivity {
             }
             return false;
         });
+
+
+        String token = getSharedPreferences("keystore", MODE_PRIVATE).getString("ste_token", "");
+        if (!token.isEmpty()) {
+            loadingProgressBar.setVisibility(View.VISIBLE);
+            loginViewModel.getInfo(token);
+        }
+
     }
 
-    private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + ' ' + model.getDisplayName() + '!';
+    private void updateUiWithUser(LoginServerReply model) {
+        String welcome = getString(R.string.welcome) + ' ' + model.getName() + '!';
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        SharedPreferences sp = getSharedPreferences("keystore", MODE_PRIVATE);
+        sp.edit().putString("ste_token", model.getSte_token()).apply();
         startActivity(new Intent(this, MainActivity.class));
     }
 

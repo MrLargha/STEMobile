@@ -2,9 +2,11 @@ package ru.mrlargha.stemobile.ui.login;
 
 import androidx.annotation.Nullable;
 
+import ru.mrlargha.stemobile.data.model.LoginServerReply;
+
 class LoginResult {
     @Nullable
-    private LoggedInUserView success;
+    private LoginServerReply success;
     @Nullable
     private String error;
 
@@ -12,12 +14,12 @@ class LoginResult {
         this.error = error;
     }
 
-    LoginResult(@Nullable LoggedInUserView success) {
+    LoginResult(@Nullable LoginServerReply success) {
         this.success = success;
     }
 
     @Nullable
-    LoggedInUserView getSuccess() {
+    LoginServerReply getSuccess() {
         return success;
     }
 

@@ -38,6 +38,42 @@ public class LoginDataSource {
         }
     }
 
+    public Result<LoginServerReply> register(String vk_id, String password) {
+        Call<LoginServerReply> loggedInUserCall = mSTEApi.register(vk_id, password);
+        try {
+            Response<LoginServerReply> response = loggedInUserCall.execute();
+            if (response.body() != null) {
+                if (response.body().getStatus().equals("ok")) {
+                    return new Result.Success<LoginServerReply>(response.body());
+                } else {
+                    return new Result.Error(response.body().getError_string());
+                }
+            } else {
+                throw new IOException();
+            }
+        } catch (IOException e) {
+            return new Result.Error("Ошибка сети");
+        }
+    }
+
+    public Result<LoginServerReply> getInfo(String token) {
+        Call<LoginServerReply> loggedInUserCall = mSTEApi.getInfo(token);
+        try {
+            Response<LoginServerReply> response = loggedInUserCall.execute();
+            if (response.body() != null) {
+                if (response.body().getStatus().equals("ok")) {
+                    return new Result.Success<LoginServerReply>(response.body());
+                } else {
+                    return new Result.Error(response.body().getError_string());
+                }
+            } else {
+                throw new IOException();
+            }
+        } catch (IOException e) {
+            return new Result.Error("Ошибка сети");
+        }
+    }
+
 //    public Result<LoggedInUser> getUserInfo(String ste_token){
 //      TODO: Request user info
 //    }
