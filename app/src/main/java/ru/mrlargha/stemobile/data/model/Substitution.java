@@ -8,6 +8,8 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import com.google.gson.annotations.Expose;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
@@ -26,25 +28,34 @@ public class Substitution implements Parcelable {
     @ColumnInfo(name = "uid")
     private int mID;
 
+    public static final Creator<Substitution> CREATOR = new Creator<Substitution>() {
+        @Override
+        public Substitution createFromParcel(Parcel in) {
+            return new Substitution(in);
+        }
+
+        @Override
+        public Substitution[] newArray(int size) {
+            return new Substitution[size];
+        }
+    };
     @NotNull
     @TypeConverters({DateConverter.class})
+    @Expose
     private Date substitutionDate;
-
+    @Expose
     private int group;
-
-    private int pair;
 
     @NotNull
     private String status;
-
+    @Expose
+    private int pair;
+    @Expose
     @NotNull
     private String cabinet;
-
+    @Expose
     @NotNull
     private String teacher;
-
-    @NotNull
-    private String subject;
 
     public Substitution(@NotNull String teacher, @NotNull String subject,
                         int group, int pair, @NotNull Date substitutionDate,
@@ -56,6 +67,20 @@ public class Substitution implements Parcelable {
         this.substitutionDate = substitutionDate;
         this.cabinet = cabinet;
         this.status = status;
+    }
+
+    @Expose
+    @NotNull
+    private String subject;
+
+    protected Substitution(Parcel in) {
+        mID = in.readInt();
+        group = in.readInt();
+        pair = in.readInt();
+        status = in.readString();
+        cabinet = in.readString();
+        teacher = in.readString();
+        subject = in.readString();
     }
 
     @NotNull

@@ -127,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.sync) {
+//            mViewModel;
         }
 
         return super.onOptionsItemSelected(item);
