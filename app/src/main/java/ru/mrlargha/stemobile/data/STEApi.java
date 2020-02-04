@@ -6,6 +6,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 import ru.mrlargha.stemobile.data.model.LoginServerReply;
 import ru.mrlargha.stemobile.data.model.SimpleServerReply;
+import ru.mrlargha.stemobile.data.model.SubstitutionsReply;
 
 public interface STEApi {
     @POST("login")
@@ -25,5 +26,9 @@ public interface STEApi {
                                                @Query("subject") String subject,
                                                @Query("pair") String pair,
                                                @Query("group") String group);
+
+    @GET("get_substitutions")
+    Call<SubstitutionsReply> getSubstitutions(@Query("token") String token,
+                                              @Query("date") int date);
 
 }

@@ -1,6 +1,11 @@
 package ru.mrlargha.stemobile.data;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+
 import java.io.IOException;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -14,8 +19,14 @@ public class STEDataSource {
     private STEApi mSTEApi;
 
     public STEDataSource() {
+        GsonBuilder builder = new GsonBuilder();
+
+        builder.registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, typeOfT, context)
+                -> new Date(json.getAsJsonPrimitive().getAsLong()));
+
+        Gson gson = builder.create();
         Retrofit mRetrofit = new Retrofit.Builder().baseUrl("http://fspovkbot.tmweb.ru/ste/")
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         mSTEApi = mRetrofit.create(STEApi.class);
     }
@@ -39,6 +50,10 @@ public class STEDataSource {
                                                       substitution.getSubject(),
                                                       String.valueOf(substitution.getPair()),
                                                       String.valueOf(substitution.getGroup())));
+    }
+
+    Result getSubstitutions(String token, int date) {
+        return executeCall(mSTEApi.getSubstitutions(token, date));
     }
 
     private <T extends SimpleServerReply> Result executeCall(Call<T> userCall) {

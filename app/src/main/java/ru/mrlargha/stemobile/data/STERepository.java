@@ -9,6 +9,7 @@ import java.util.List;
 
 import ru.mrlargha.stemobile.data.model.SimpleServerReply;
 import ru.mrlargha.stemobile.data.model.Substitution;
+import ru.mrlargha.stemobile.data.model.SubstitutionsReply;
 import ru.mrlargha.stemobile.database.STEDao;
 import ru.mrlargha.stemobile.database.STERoomDatabase;
 
@@ -52,5 +53,9 @@ public class STERepository {
 
     public Result<SimpleServerReply> sendSubstitution(Substitution substitution) {
         return dataSource.sendSubstitution(substitution, LoginRepository.getInstance(dataSource).getToken());
+    }
+
+    public Result<SubstitutionsReply> getSubstitutionsFromServer(int date) {
+        return dataSource.getSubstitutions(LoginRepository.getInstance(dataSource).getToken(), date);
     }
 }

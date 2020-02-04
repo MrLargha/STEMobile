@@ -52,7 +52,7 @@ public class Substitution {
 
     public Substitution(@NotNull String teacher, @NotNull String subject,
                         int group, int pair, @NotNull Date substitutionDate,
-                        @NotNull String cabinet, @NotNull String status, String author) {
+                        @NotNull String cabinet, @NotNull String status, @NotNull String author) {
         this.teacher = teacher;
         this.subject = subject;
         this.group = group;
