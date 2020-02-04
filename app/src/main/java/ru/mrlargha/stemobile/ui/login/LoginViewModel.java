@@ -7,16 +7,16 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import ru.mrlargha.stemobile.R;
-import ru.mrlargha.stemobile.data.LoginDataSource;
 import ru.mrlargha.stemobile.data.LoginRepository;
 import ru.mrlargha.stemobile.data.Result;
+import ru.mrlargha.stemobile.data.STEDataSource;
 import ru.mrlargha.stemobile.data.model.LoginServerReply;
 
 public class LoginViewModel extends ViewModel {
 
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
     private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
-    private LoginRepository loginRepository = LoginRepository.getInstance(new LoginDataSource());
+    private LoginRepository loginRepository = LoginRepository.getInstance(new STEDataSource());
 
     LiveData<LoginFormState> getLoginFormState() {
         return loginFormState;
@@ -48,7 +48,6 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
-    // A placeholder username validation check
     private boolean isUserNameValid(String username) {
         return !username.isEmpty();
     }
@@ -57,57 +56,46 @@ public class LoginViewModel extends ViewModel {
         return password != null && password.trim().length() > 5;
     }
 
-    private class LoginTask extends AsyncTask<String, Void, Result<LoginServerReply>> {
+    private void handleLoginResult(Result<LoginServerReply> loggedInUserResult) {
+        if (loggedInUserResult instanceof Result.Success) {
+            LoginServerReply data = ((Result.Success<LoginServerReply>) loggedInUserResult).getData();
+            loginResult.setValue(new LoginResult(data));
+        } else {
+            loginResult.setValue(new LoginResult(((Result.Error) loggedInUserResult).getErrorString()));
+        }
+    }
 
+    private class LoginTask extends AuthTask {
         @Override
         protected Result<LoginServerReply> doInBackground(String... strings) {
             return loginRepository.login(strings[0], strings[1]);
         }
-
-        @Override
-        protected void onPostExecute(Result<LoginServerReply> loggedInUserResult) {
-            if (loggedInUserResult instanceof Result.Success) {
-                LoginServerReply data = ((Result.Success<LoginServerReply>) loggedInUserResult).getData();
-                loginResult.setValue(new LoginResult(data));
-            } else {
-                loginResult.setValue(new LoginResult(((Result.Error) loggedInUserResult).getErrorString()));
-            }
-        }
     }
 
-    private class RegisterTask extends AsyncTask<String, Void, Result<LoginServerReply>> {
-
+    private class RegisterTask extends AuthTask {
         @Override
         protected Result<LoginServerReply> doInBackground(String... strings) {
             return loginRepository.register(strings[0], strings[1]);
         }
-
-        @Override
-        protected void onPostExecute(Result<LoginServerReply> loggedInUserResult) {
-            if (loggedInUserResult instanceof Result.Success) {
-                LoginServerReply data = ((Result.Success<LoginServerReply>) loggedInUserResult).getData();
-                loginResult.setValue(new LoginResult(data));
-            } else {
-                loginResult.setValue(new LoginResult(((Result.Error) loggedInUserResult).getErrorString()));
-            }
-        }
     }
 
-    private class FetchInfoTask extends AsyncTask<String, Void, Result<LoginServerReply>> {
-
+    private class FetchInfoTask extends AuthTask {
         @Override
         protected Result<LoginServerReply> doInBackground(String... strings) {
             return loginRepository.getInfo(strings[0]);
         }
+    }
+
+    private class AuthTask extends AsyncTask<String, Void, Result<LoginServerReply>> {
+
+        @Override
+        protected Result<LoginServerReply> doInBackground(String... strings) {
+            return null;
+        }
 
         @Override
         protected void onPostExecute(Result<LoginServerReply> loggedInUserResult) {
-            if (loggedInUserResult instanceof Result.Success) {
-                LoginServerReply data = ((Result.Success<LoginServerReply>) loggedInUserResult).getData();
-                loginResult.setValue(new LoginResult(data));
-            } else {
-                loginResult.setValue(new LoginResult(((Result.Error) loggedInUserResult).getErrorString()));
-            }
+            handleLoginResult(loggedInUserResult);
         }
     }
 }

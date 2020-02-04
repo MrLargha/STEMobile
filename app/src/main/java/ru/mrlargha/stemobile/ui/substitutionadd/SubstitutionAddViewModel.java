@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
+import ru.mrlargha.stemobile.data.LoginRepository;
+import ru.mrlargha.stemobile.data.STEDataSource;
 import ru.mrlargha.stemobile.data.STERepository;
 import ru.mrlargha.stemobile.data.model.Substitution;
 import ru.mrlargha.stemobile.tools.DateFormatter;
@@ -95,10 +97,10 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
                 Substitution substitution =
                         new Substitution(teacher, subject, Integer.parseInt(group),
                                          Integer.parseInt(pair), DateFormatter.stringToDate(date),
-                                         cabinet, Substitution.STATUS_NOT_SYNCHRONIZED);
+                                         cabinet, Substitution.STATUS_NOT_SYNCHRONIZED,
+                                         LoginRepository.getInstance(new STEDataSource()).getName());
                 steRepository.insertSubstitutionToDB(substitution);
             } catch (ParseException e) {
-                // TODO: Remove this shit
                 builder.setDateError("Неверный формат даты.");
             }
         }

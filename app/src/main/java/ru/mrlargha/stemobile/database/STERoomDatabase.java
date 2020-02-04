@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 
 import ru.mrlargha.stemobile.data.model.Substitution;
 
-@Database(entities = {Substitution.class}, version = 3, exportSchema = false)
+@Database(entities = {Substitution.class}, version = 4, exportSchema = false)
 public abstract class STERoomDatabase extends RoomDatabase {
     private static final int NUMBER_OF_THREADS = 4;
 

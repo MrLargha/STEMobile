@@ -1,5 +1,7 @@
 package ru.mrlargha.stemobile.data;
 
+import androidx.annotation.Nullable;
+
 import ru.mrlargha.stemobile.data.model.LoginServerReply;
 
 
@@ -7,14 +9,14 @@ public class LoginRepository {
 
     private static volatile LoginRepository instance;
 
-    private LoginDataSource dataSource;
+    private STEDataSource dataSource;
     private LoginServerReply user = null;
 
-    private LoginRepository(LoginDataSource dataSource) {
+    private LoginRepository(STEDataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    public static LoginRepository getInstance(LoginDataSource dataSource) {
+    public static LoginRepository getInstance(STEDataSource dataSource) {
         if (instance == null) {
             instance = new LoginRepository(dataSource);
         }
@@ -22,7 +24,25 @@ public class LoginRepository {
     }
 
     public boolean isLoggedIn() {
-        return user != null;
+        return user.getStatus().equals("ok");
+    }
+
+    @Nullable
+    public String getToken() {
+        if (user != null) {
+            return user.getSte_token();
+        } else {
+            return null;
+        }
+    }
+
+    @Nullable
+    public String getName() {
+        if (user != null) {
+            return user.getName();
+        } else {
+            return null;
+        }
     }
 
     public void logout() {
@@ -35,7 +55,7 @@ public class LoginRepository {
     }
 
     public Result<LoginServerReply> login(String username, String password) {
-        Result<LoginServerReply> result = dataSource.login(username, password);
+        Result result = dataSource.login(username, password);
         if (result instanceof Result.Success) {
             setLoggedInUser(((Result.Success<LoginServerReply>) result).getData());
         }
@@ -43,7 +63,7 @@ public class LoginRepository {
     }
 
     public Result<LoginServerReply> register(String vk_id, String password) {
-        Result<LoginServerReply> result = dataSource.register(vk_id, password);
+        Result result = dataSource.register(vk_id, password);
         if (result instanceof Result.Success) {
             setLoggedInUser(((Result.Success<LoginServerReply>) result).getData());
         }
@@ -51,10 +71,10 @@ public class LoginRepository {
     }
 
     public Result<LoginServerReply> getInfo(String token) {
-        Result<LoginServerReply> result = dataSource.getInfo(token);
+        Result result = dataSource.getInfo(token);
         if (result instanceof Result.Success) {
             setLoggedInUser(((Result.Success<LoginServerReply>) result).getData());
         }
-        return result;
+        return (Result<LoginServerReply>) result;
     }
 }

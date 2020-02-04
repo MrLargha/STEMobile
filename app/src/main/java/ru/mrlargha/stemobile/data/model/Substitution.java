@@ -1,8 +1,5 @@
 package ru.mrlargha.stemobile.data.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -17,7 +14,7 @@ import java.util.Date;
 import ru.mrlargha.stemobile.database.DateConverter;
 
 @Entity(tableName = "substitutions_table")
-public class Substitution implements Parcelable {
+public class Substitution {
 
     public static final String STATUS_NOT_SYNCHRONIZED = "NOT_SYNCHRONIZED";
     public static final String STATUS_SYNCHRONIZED = "SYNCHRONIZED";
@@ -28,38 +25,34 @@ public class Substitution implements Parcelable {
     @ColumnInfo(name = "uid")
     private int mID;
 
-    public static final Creator<Substitution> CREATOR = new Creator<Substitution>() {
-        @Override
-        public Substitution createFromParcel(Parcel in) {
-            return new Substitution(in);
-        }
-
-        @Override
-        public Substitution[] newArray(int size) {
-            return new Substitution[size];
-        }
-    };
     @NotNull
     @TypeConverters({DateConverter.class})
     @Expose
     private Date substitutionDate;
+
     @Expose
     private int group;
 
     @NotNull
     private String status;
+
     @Expose
     private int pair;
+
     @Expose
     @NotNull
     private String cabinet;
+
     @Expose
     @NotNull
     private String teacher;
 
+    @NotNull
+    private String author;
+
     public Substitution(@NotNull String teacher, @NotNull String subject,
                         int group, int pair, @NotNull Date substitutionDate,
-                        @NotNull String cabinet, @NotNull String status) {
+                        @NotNull String cabinet, @NotNull String status, String author) {
         this.teacher = teacher;
         this.subject = subject;
         this.group = group;
@@ -67,21 +60,12 @@ public class Substitution implements Parcelable {
         this.substitutionDate = substitutionDate;
         this.cabinet = cabinet;
         this.status = status;
+        this.author = author;
     }
 
     @Expose
     @NotNull
     private String subject;
-
-    protected Substitution(Parcel in) {
-        mID = in.readInt();
-        group = in.readInt();
-        pair = in.readInt();
-        status = in.readString();
-        cabinet = in.readString();
-        teacher = in.readString();
-        subject = in.readString();
-    }
 
     @NotNull
     public String getTeacher() {
@@ -124,17 +108,12 @@ public class Substitution implements Parcelable {
                 && comparable.getGroup() == group;
     }
 
+    @NotNull
     public String getStatus() {
         return status;
     }
 
-    @Override
-    public int describeContents() {
-        return mID;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(mID);
+    public String getAuthor() {
+        return author;
     }
 }

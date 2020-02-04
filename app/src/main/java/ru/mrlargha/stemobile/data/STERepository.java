@@ -7,22 +7,23 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
+import ru.mrlargha.stemobile.data.model.SimpleServerReply;
 import ru.mrlargha.stemobile.data.model.Substitution;
 import ru.mrlargha.stemobile.database.STEDao;
 import ru.mrlargha.stemobile.database.STERoomDatabase;
 
 public class STERepository {
     private static final String TAG = "stemobile";
-
     private static STERepository INSTANCE;
-
     private STEDao steDao;
+    private STEDataSource dataSource;
 
-    private LoginDataSource dataSource;
+    private boolean isSendingRequired = false;
 
     private STERepository(final Context context) {
         STERoomDatabase steRoomDatabase = STERoomDatabase.getDatabase(context);
         steDao = steRoomDatabase.substitutionDao();
+        dataSource = new STEDataSource();
         Log.d(TAG, "STERepository: created");
     }
 
@@ -43,5 +44,9 @@ public class STERepository {
 
     public LiveData<List<Substitution>> getAllSubstitutions() {
         return steDao.getAllSubstitutions();
+    }
+
+    public Result<SimpleServerReply> sendSubstitution(Substitution substitution) {
+        return dataSource.sendSubstitution(substitution, LoginRepository.getInstance(dataSource).getToken());
     }
 }

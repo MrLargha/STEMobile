@@ -18,9 +18,12 @@ public interface STEApi {
     Call<LoginServerReply> getInfo(@Query("token") String token);
 
     @POST("add_substitution")
-    Call<SimpleServerReply> insertSubstitution(String token, String date,
-                                               String cabinet, String teacher,
-                                               String subject, String pair,
-                                               String group);
+    Call<SimpleServerReply> insertSubstitution(@Query("token") String token,
+                                               @Query("date") String date,
+                                               @Query("cabinet") String cabinet,
+                                               @Query("teacher") String teacher,
+                                               @Query("subject") String subject,
+                                               @Query("pair") String pair,
+                                               @Query("group") String group);
 
 }

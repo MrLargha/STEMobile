@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
                 new SubstitutionLookup(mBinding.content.substitutionsRecylcler),
                 StorageStrategy.createLongStorage()
         ).withOnDragInitiatedListener(e -> {
-            Log.d("stemobile", "DRAG!!!");
             return true;
         }).build();
 
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSelectionChanged() {
                 if (mSelectionTracker.hasSelection() && mActionMode == null) {
-                    Log.d("stemobile", "onSelectionChanged: " +
+                    Log.d(TAG, "onSelectionChanged: " +
                             mSelectionTracker.getSelection().size());
                     mActionMode = startSupportActionMode(new SubstitutionActionModeCallback(
                             MainActivity.this, mSelectionTracker));
@@ -128,9 +127,8 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.sync) {
-//            mViewModel;
+            mViewModel.sendSubstitutions();
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

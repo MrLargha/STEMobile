@@ -1,6 +1,7 @@
 package ru.mrlargha.stemobile.ui.main;
 
 import android.app.Application;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -9,9 +10,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import ru.mrlargha.stemobile.data.Result;
 import ru.mrlargha.stemobile.data.STERepository;
+import ru.mrlargha.stemobile.data.model.SimpleServerReply;
 import ru.mrlargha.stemobile.data.model.Substitution;
 
 public class MainViewModel extends AndroidViewModel {
@@ -20,7 +24,7 @@ public class MainViewModel extends AndroidViewModel {
     private STERepository steRepository;
 
     private LiveData<List<Substitution>> substitutionsList;
-
+    private MutableLiveData<Integer> syncProgress = new MutableLiveData<>(-1);
     private MutableLiveData<String> undoString = new MutableLiveData<>();
 
     private ArrayList<Substitution> savedSubstitutions = new ArrayList<>();
@@ -82,4 +86,44 @@ public class MainViewModel extends AndroidViewModel {
         return substitutionsList;
     }
 
+    public void sendSubstitutions() {
+        LinkedList<Substitution> pendingSubstitutions = new LinkedList<>();
+        if (substitutionsList.getValue() != null) {
+            for (Substitution substitution : substitutionsList.getValue()) {
+                if (substitution.getStatus().equals(Substitution.STATUS_NOT_SYNCHRONIZED)) {
+                    pendingSubstitutions.add(substitution);
+                }
+            }
+        }
+        new SendTask().execute(pendingSubstitutions);
+    }
+
+    private class SendTask extends AsyncTask<LinkedList<Substitution>, Integer, List<SimpleServerReply>> {
+
+        @Override
+        protected List<SimpleServerReply> doInBackground(LinkedList<Substitution>... linkedLists) {
+            int progress = 0;
+            LinkedList<SimpleServerReply> replies = new LinkedList<>();
+            for (Substitution substitution : linkedLists[0]) {
+                Result result = steRepository.sendSubstitution(substitution);
+                if (result instanceof Result.Success) {
+                    replies.add(((Result.Success<SimpleServerReply>) result).getData());
+                }
+                progress += 100 / linkedLists[0].size();
+                publishProgress(progress);
+            }
+            return replies;
+        }
+
+        @Override
+        protected void onPostExecute(List<SimpleServerReply> simpleServerReplies) {
+            super.onPostExecute(simpleServerReplies);
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            Log.d(TAG, "onProgressUpdate: Progress " + values[0]);
+        }
+    }
 }
