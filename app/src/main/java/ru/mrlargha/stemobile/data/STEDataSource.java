@@ -52,7 +52,7 @@ public class STEDataSource {
                                                       String.valueOf(substitution.getGroup())));
     }
 
-    Result getSubstitutions(String token, int date) {
+    Result getSubstitutions(String token, long date) {
         return executeCall(mSTEApi.getSubstitutions(token, date));
     }
 

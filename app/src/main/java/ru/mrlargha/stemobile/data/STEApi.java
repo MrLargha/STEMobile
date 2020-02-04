@@ -29,6 +29,6 @@ public interface STEApi {
 
     @GET("get_substitutions")
     Call<SubstitutionsReply> getSubstitutions(@Query("token") String token,
-                                              @Query("date") int date);
+                                              @Query("date") long date);
 
 }

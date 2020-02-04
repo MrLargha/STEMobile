@@ -108,9 +108,20 @@ public class Substitution {
                 && comparable.getGroup() == group;
     }
 
+    public boolean fullEquals(Substitution comparable) {
+        return comparable.getPair() == pair && comparable.getSubstitutionDate().equals(substitutionDate)
+                && comparable.getGroup() == group && teacher.equals(comparable.teacher) &&
+                subject.equals(comparable.subject) && cabinet.equals(comparable.cabinet)
+                && author.equals(comparable.getAuthor());
+    }
+
     @NotNull
     public String getStatus() {
         return status;
+    }
+
+    public void setStatus(@NotNull String status) {
+        this.status = status;
     }
 
     public String getAuthor() {

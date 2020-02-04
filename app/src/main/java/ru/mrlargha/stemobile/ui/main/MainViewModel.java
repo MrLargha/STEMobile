@@ -89,15 +89,8 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     void syncSubstitutions() {
-        LinkedList<Substitution> pendingSubstitutions = new LinkedList<>();
-        if (substitutionsList.getValue() != null) {
-            for (Substitution substitution : substitutionsList.getValue()) {
-                if (substitution.getStatus().equals(Substitution.STATUS_NOT_SYNCHRONIZED)) {
-                    pendingSubstitutions.add(substitution);
-                }
-            }
-        }
-        new SyncTask().execute(pendingSubstitutions);
+
+        new SyncTask().execute(new LinkedList<>(substitutionsList.getValue()));
     }
 
     MutableLiveData<Integer> getSyncProgress() {
@@ -114,11 +107,47 @@ public class MainViewModel extends AndroidViewModel {
             reference.set(Calendar.MINUTE, reference.getActualMinimum(Calendar.MINUTE));
             reference.set(Calendar.SECOND, reference.getActualMinimum(Calendar.SECOND));
             reference.set(Calendar.MILLISECOND, reference.getActualMinimum(Calendar.MILLISECOND));
-            Result<SubstitutionsReply> fromServer = steRepository.getSubstitutionsFromServer((int) reference.getTime().getTime());
+            Result<SubstitutionsReply> fromServer = steRepository.getSubstitutionsFromServer((int)
+                    reference.getTime().getTime());
+
+            // Find conflicts with the remote
+            if (fromServer instanceof Result.Success) {
+                for (Substitution serverSubstitution : ((SubstitutionsReply) ((Result.Success)
+                        fromServer).getData()).getSubstitutions()) {
+                    boolean isOk = true, hasOnClient = false;
+                    int conflictedID = -1;
+                    for (Substitution localSubstitution : linkedLists[0]) {
+                        if (localSubstitution.fullEquals(serverSubstitution)) {
+                            hasOnClient = true;
+                            break;
+                        } else if (localSubstitution.equals(serverSubstitution)) {
+                            isOk = false;
+                            conflictedID = localSubstitution.getID();
+                            break;
+                        }
+                    }
+                    if (!isOk) {
+                        steRepository.setSubstitutionStatus(conflictedID, Substitution.STATUS_ERROR);
+                    }
+                    if (!hasOnClient) {
+                        serverSubstitution.setStatus(Substitution.STATUS_SYNCHRONIZED);
+                        steRepository.insertSubstitutionToDB(serverSubstitution);
+                    }
+                }
+            }
+
+            LinkedList<Substitution> pendingSubstitutions = new LinkedList<>();
+            if (substitutionsList.getValue() != null) {
+                for (Substitution substitution : linkedLists[0]) {
+                    if (substitution.getStatus().equals(Substitution.STATUS_NOT_SYNCHRONIZED)) {
+                        pendingSubstitutions.add(substitution);
+                    }
+                }
+            }
 
             int progress = 0;
             LinkedList<SimpleServerReply> replies = new LinkedList<>();
-            for (Substitution substitution : linkedLists[0]) {
+            for (Substitution substitution : pendingSubstitutions) {
                 Result result = steRepository.sendSubstitution(substitution);
                 if (result instanceof Result.Success) {
                     SimpleServerReply reply = ((Result.Success<SimpleServerReply>) result).getData();
@@ -134,7 +163,7 @@ public class MainViewModel extends AndroidViewModel {
                     steRepository.setSubstitutionStatus(substitution.getID(),
                             Substitution.STATUS_ERROR);
                 }
-                progress += 100 / linkedLists[0].size();
+                progress += 100 / pendingSubstitutions.size();
                 publishProgress(progress);
             }
             return replies;
