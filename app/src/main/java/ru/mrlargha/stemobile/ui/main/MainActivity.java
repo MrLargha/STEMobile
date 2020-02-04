@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -101,6 +102,15 @@ public class MainActivity extends AppCompatActivity {
                                 mViewModel.clearDeletionCache();
                             }
                         }).show();
+            }
+        });
+
+        mViewModel.getSyncProgress().observe(this, progress -> {
+            if (progress > -1) {
+                mBinding.content.progressBar.setVisibility(View.VISIBLE);
+                mBinding.content.progressBar.setProgress(progress);
+            } else {
+                mBinding.content.progressBar.setVisibility(View.GONE);
             }
         });
     }

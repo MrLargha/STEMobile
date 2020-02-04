@@ -98,6 +98,10 @@ public class MainViewModel extends AndroidViewModel {
         new SendTask().execute(pendingSubstitutions);
     }
 
+    public MutableLiveData<Integer> getSyncProgress() {
+        return syncProgress;
+    }
+
     private class SendTask extends AsyncTask<LinkedList<Substitution>, Integer, List<SimpleServerReply>> {
 
         @Override
@@ -107,7 +111,18 @@ public class MainViewModel extends AndroidViewModel {
             for (Substitution substitution : linkedLists[0]) {
                 Result result = steRepository.sendSubstitution(substitution);
                 if (result instanceof Result.Success) {
-                    replies.add(((Result.Success<SimpleServerReply>) result).getData());
+                    SimpleServerReply reply = ((Result.Success<SimpleServerReply>) result).getData();
+                    replies.add(reply);
+                    if (reply.getStatus().equals("ok")) {
+                        steRepository.setSubstitutionStatus(substitution.getID(),
+                                                            Substitution.STATUS_SYNCHRONIZED);
+                    } else {
+                        steRepository.setSubstitutionStatus(substitution.getID(),
+                                                            Substitution.STATUS_ERROR);
+                    }
+                } else {
+                    steRepository.setSubstitutionStatus(substitution.getID(),
+                                                        Substitution.STATUS_ERROR);
                 }
                 progress += 100 / linkedLists[0].size();
                 publishProgress(progress);
@@ -118,11 +133,13 @@ public class MainViewModel extends AndroidViewModel {
         @Override
         protected void onPostExecute(List<SimpleServerReply> simpleServerReplies) {
             super.onPostExecute(simpleServerReplies);
+            syncProgress.setValue(-1);
         }
 
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
+            syncProgress.setValue(values[0]);
             Log.d(TAG, "onProgressUpdate: Progress " + values[0]);
         }
     }

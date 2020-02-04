@@ -46,6 +46,10 @@ public class STERepository {
         return steDao.getAllSubstitutions();
     }
 
+    public void setSubstitutionStatus(int id, String status) {
+        steDao.setStatus(id, status);
+    }
+
     public Result<SimpleServerReply> sendSubstitution(Substitution substitution) {
         return dataSource.sendSubstitution(substitution, LoginRepository.getInstance(dataSource).getToken());
     }
