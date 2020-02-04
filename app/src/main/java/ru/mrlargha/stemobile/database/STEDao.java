@@ -31,4 +31,16 @@ public interface STEDao {
 
     @Query("DELETE FROM substitutions_table WHERE uid = :uid")
     void deleteByUID(long uid);
+
+    @TypeConverters({DateConverter.class})
+    @Query("SELECT * FROM substitutions_table WHERE status = 'NOT_SYNCHRONIZED'")
+    LiveData<List<Substitution>> getUnSyncSubstitutions();
+
+    @TypeConverters({DateConverter.class})
+    @Query("UPDATE substitutions_table SET status = :status WHERE uid = :substitutionId")
+    void setStatus(int substitutionId, String status);
+
+    @TypeConverters({DateConverter.class})
+    @Query("DELETE FROM SUBSTITUTIONS_TABLE WHERE substitutionDate <= :deleteDate")
+    void deleteBefore(Date deleteDate);
 }
