@@ -89,7 +89,6 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     void syncSubstitutions() {
-
         new SyncTask().execute(new LinkedList<>(substitutionsList.getValue()));
     }
 
@@ -116,20 +115,12 @@ public class MainViewModel extends AndroidViewModel {
             if (fromServer instanceof Result.Success) {
                 for (Substitution serverSubstitution : ((SubstitutionsReply) ((Result.Success)
                         fromServer).getData()).getSubstitutions()) {
-                    boolean isOk = true, hasOnClient = false;
-                    int conflictedID = -1;
+                    boolean hasOnClient = false;
                     for (Substitution localSubstitution : linkedLists[0]) {
                         if (localSubstitution.fullEquals(serverSubstitution)) {
                             hasOnClient = true;
                             break;
-                        } else if (localSubstitution.equals(serverSubstitution)) {
-                            isOk = false;
-                            conflictedID = localSubstitution.getID();
-                            break;
                         }
-                    }
-                    if (!isOk) {
-                        steRepository.setSubstitutionStatus(conflictedID, Substitution.STATUS_ERROR);
                     }
                     if (!hasOnClient) {
                         serverSubstitution.setStatus(Substitution.STATUS_SYNCHRONIZED);

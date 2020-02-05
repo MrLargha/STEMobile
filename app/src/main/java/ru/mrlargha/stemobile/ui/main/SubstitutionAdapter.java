@@ -112,6 +112,9 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         @Override
         protected ArrayList<Object> doInBackground(ArrayList<Substitution>... arrayLists) {
+
+            // FIXME DUPLICATE of 'сегодня'
+
             ArrayList<Substitution> elements = arrayLists[0];
             ArrayList<Object> resultSet = new ArrayList<>();
             if (!elements.isEmpty()) {
