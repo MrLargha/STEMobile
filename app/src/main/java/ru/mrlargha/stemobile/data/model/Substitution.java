@@ -2,6 +2,7 @@ package ru.mrlargha.stemobile.data.model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
@@ -13,7 +14,8 @@ import java.util.Date;
 
 import ru.mrlargha.stemobile.database.DateConverter;
 
-@Entity(tableName = "substitutions_table")
+@Entity(tableName = "substitutions_table", indices = {@Index(value = {"group",
+        "substitutionDate", "pair"}, unique = true)})
 public class Substitution {
 
     public static final String STATUS_NOT_SYNCHRONIZED = "NOT_SYNCHRONIZED";

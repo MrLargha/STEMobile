@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.CalendarConstraints;
@@ -47,7 +47,7 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         setContentView(mBinding.getRoot());
         setSupportActionBar(mBinding.toolbar2);
 
-        mViewModel = ViewModelProviders.of(this).get(SubstitutionAddViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(SubstitutionAddViewModel.class);
         // Setup error updates
         mViewModel.getFormState().observe(this, formState -> {
             mBinding.dateInput.setError(formState.getDateError());
@@ -96,6 +96,9 @@ public class SubstitutionAddActivity extends AppCompatActivity {
                 mBinding.substitutingTeacherEdit.getEditableText().toString(),
                 mBinding.substitutingSubjectEdit.getEditableText().toString()));
         mBinding.pairToggleGroup.check(R.id.pair1);
+        mViewModel.getLocalSubstitutionsLiveData().observe(this, list -> {
+            mViewModel.setLocalSubstitutions(list);
+        });
     }
 
     @Override

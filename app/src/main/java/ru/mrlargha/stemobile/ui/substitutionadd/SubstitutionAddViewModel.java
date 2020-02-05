@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.text.ParseException;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import ru.mrlargha.stemobile.data.LoginRepository;
 import ru.mrlargha.stemobile.data.STEDataSource;
@@ -27,6 +30,9 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
     private MutableLiveData<ArrayList<String>> teachersList = new MutableLiveData<>();
     private MutableLiveData<ArrayList<String>> subjectsList = new MutableLiveData<>();
     private ArrayList<String> groupsList = new ArrayList<>();
+    private LiveData<List<Substitution>> localSubstitutionsLiveData;
+
+    private List<Substitution> localSubstitutions = new LinkedList<>();
 
 
     public SubstitutionAddViewModel(@NonNull Application application) {
@@ -36,6 +42,7 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
         loadTeachers();
         loadSubjects();
         loadGroups();
+        localSubstitutionsLiveData = steRepository.getAllSubstitutions();
     }
 
     private boolean isDateValid(String date) {
@@ -99,7 +106,18 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
                                          Integer.parseInt(pair), DateFormatter.stringToDate(date),
                                          cabinet, Substitution.STATUS_NOT_SYNCHRONIZED,
                                          LoginRepository.getInstance(new STEDataSource()).getName());
-                steRepository.insertSubstitutionToDB(substitution);
+                boolean isOk = true;
+                for (Substitution localSubstitution : localSubstitutions) {
+                    if (localSubstitution.equals(substitution)) {
+                        isOk = false;
+                        break;
+                    }
+                }
+                if (isOk) {
+                    steRepository.insertSubstitutionToDB(substitution);
+                } else {
+                    builder.setCustomError("Такое замещение уже добавлено");
+                }
             } catch (ParseException e) {
                 builder.setDateError("Неверный формат даты.");
             }
@@ -133,5 +151,17 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
 
     private void loadGroups() {
         groupsList = new ArrayList<>(Arrays.asList("822", "821", "724"));
+    }
+
+    public LiveData<List<Substitution>> getLocalSubstitutionsLiveData() {
+        return localSubstitutionsLiveData;
+    }
+
+    public List<Substitution> getLocalSubstitutions() {
+        return localSubstitutions;
+    }
+
+    public void setLocalSubstitutions(List<Substitution> localSubstitutions) {
+        this.localSubstitutions = localSubstitutions;
     }
 }
