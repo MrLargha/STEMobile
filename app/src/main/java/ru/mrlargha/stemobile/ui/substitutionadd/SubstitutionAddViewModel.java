@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TimeZone;
 
 import ru.mrlargha.stemobile.data.LoginRepository;
 import ru.mrlargha.stemobile.data.STEDataSource;
@@ -55,7 +56,7 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
                     return false;
                 }
                 Date parsedDate = DateFormatter.stringToDate(date);
-                return new STEDateValidator(Calendar.getInstance().getTimeInMillis()).isValid(parsedDate.getTime());
+                return new STEDateValidator(Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow")).getTimeInMillis()).isValid(parsedDate.getTime());
             } catch (ParseException | NullPointerException e) {
                 return false;
             }

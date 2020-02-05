@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import ru.mrlargha.stemobile.data.model.Substitution;
 import ru.mrlargha.stemobile.databinding.SubstitutionDateDividerBinding;
@@ -68,9 +69,9 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     .bind(substitution, selectionTracker.isSelected((long) substitution.getID()));
         } else {
             DividerViewHolder dividerViewHolder = (DividerViewHolder) holder;
-            Calendar c = Calendar.getInstance();
+            Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
             c.setTime((Date) elements.get(position));
-            if (c.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR)) {
+            if (c.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow")).get(Calendar.DAY_OF_YEAR)) {
                 dividerViewHolder.binding.date.setText("Сегодня");
             } else {
                 dividerViewHolder.binding.date.setText(DateFormatter.dateToString((Date) elements.get(position)));
@@ -123,7 +124,7 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 Date date = elements.get(0).getSubstitutionDate();
                 resultSet.add(elements.get(0).getSubstitutionDate());
                 for (int i = 0; i < elements.size(); i++) {
-                    if (!elements.get(i).getSubstitutionDate().equals(date)) {
+                    if (elements.get(i).getSubstitutionDate().getDay() != date.getDay()) {
                         date = elements.get(i).getSubstitutionDate();
                         resultSet.add(date);
                     }

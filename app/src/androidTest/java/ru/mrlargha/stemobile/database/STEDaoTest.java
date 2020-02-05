@@ -81,7 +81,7 @@
 //
 //    @Test
 //    public void testSelectElement() throws Exception {
-//        Calendar calendar = Calendar.getInstance();
+//        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
 //        calendar.clear();
 //        calendar.set(2020, 1, 29);
 //        mSTEDao.insertSubstitution(new Substitution("T1", "S1",
@@ -107,7 +107,7 @@
 //        mSTEDao.deleteAll();
 //
 //        ArrayList<Substitution> original = new ArrayList<>();
-//        Calendar c = Calendar.getInstance();
+//        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
 //        c.add(Calendar.DAY_OF_YEAR, -2);
 //        for (int i = 0; i < 5; i++) {
 //            for (int g = 1; g < 3; g++) {

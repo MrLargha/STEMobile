@@ -14,7 +14,7 @@
 //    @Test
 //    public void testSortingOfSubstitutions() {
 //        ArrayList<Substitution> original = new ArrayList<>();
-//        Calendar c = Calendar.getInstance();
+//        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
 //        c.add(Calendar.DAY_OF_YEAR, -2);
 //        for (int i = 0; i < 5; i++) {
 //            for (int g = 1; g < 3; g++) {
@@ -36,7 +36,7 @@
 //    public void testMoveOldDatesToEnd() {
 //
 //        ArrayList<Substitution> original = new ArrayList<>();
-//        Calendar c = Calendar.getInstance();
+//        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
 //        for (int i = 0; i < 5; i++) {
 //            for (int g = 1; g < 3; g++) {
 //                for (int p = 1; p < 3; p++) {
