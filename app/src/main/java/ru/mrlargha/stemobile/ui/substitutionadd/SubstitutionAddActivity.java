@@ -19,6 +19,7 @@ import java.util.TimeZone;
 
 import ru.mrlargha.stemobile.R;
 import ru.mrlargha.stemobile.databinding.ActivitySubstitutionAddBinding;
+import ru.mrlargha.stemobile.tools.DateFormatter;
 import ru.mrlargha.stemobile.tools.STEDateValidator;
 
 
@@ -26,6 +27,7 @@ public class SubstitutionAddActivity extends AppCompatActivity {
 
     private ActivitySubstitutionAddBinding mBinding;
     private SubstitutionAddViewModel mViewModel;
+    private boolean finishRequired = false;
 
 
     private MaterialDatePicker<Long> buildDatePicker() {
@@ -49,7 +51,6 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         setSupportActionBar(mBinding.toolbar2);
 
         mViewModel = new ViewModelProvider(this).get(SubstitutionAddViewModel.class);
-        // Setup error updates
         mViewModel.getFormState().observe(this, formState -> {
             mBinding.dateInput.setError(formState.getDateError());
             mBinding.cabEdit.setError(formState.getCabinetError());
@@ -62,6 +63,34 @@ public class SubstitutionAddActivity extends AppCompatActivity {
             } else if (!formState.hasErrors()) {
                 Snackbar.make(mBinding.coordinator, "Замещение добавлено в локальное хранилище",
                               Snackbar.LENGTH_SHORT).show();
+                if (finishRequired) {
+                    finish();
+                } else {
+                    mBinding.cabEditEdit.setText("");
+                    mBinding.substitutingSubjectEdit.setText("");
+                    mBinding.substitutingTeacherEdit.setText("");
+                    if (mBinding.switchMaterial.isChecked()) {
+                        int pair = Integer.parseInt(((MaterialButton) findViewById(
+                                mBinding.pairToggleGroup.getCheckedButtonId()))
+                                .getText().toString());
+                        switch (pair) {
+                            case 1:
+                                mBinding.pairToggleGroup.check(R.id.pair2);
+                                break;
+                            case 2:
+                                mBinding.pairToggleGroup.check(R.id.pair3);
+                                break;
+                            case 3:
+                                mBinding.pairToggleGroup.check(R.id.pair4);
+                                break;
+                            case 4:
+                                mBinding.pairToggleGroup.clearChecked();
+                                break;
+                        }
+                    } else {
+                        mBinding.groupEditEdit.setText("");
+                    }
+                }
             }
         });
 
@@ -84,27 +113,45 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         mBinding.substitutingSubject.setStartIconOnClickListener(v -> {
             if (mBinding.substitutingSubjectEdit.getText().toString().isEmpty()) {
                 mBinding.substitutingSubjectEdit.getEditableText().append("МДК ");
-            } else if (!mBinding.substitutingSubjectEdit.getEditableText().toString().equals("МДК ")) {
-                mBinding.substitutingSubjectEdit.setText(String.format("%s%s", getString(R.string.mdk),
-                                                                       mBinding.substitutingSubjectEdit.getText().toString()));
             }
         });
 
-        mBinding.finishButton.setOnClickListener(v -> mViewModel.submitSubstitution(mBinding.dateInputEdit.getEditableText().toString(),
+        mBinding.finishButton.setOnClickListener(v -> {
+            finishRequired = true;
+            submitSubstitution();
+        });
+
+        mBinding.addMoreButton.setOnClickListener(v -> {
+            finishRequired = false;
+            submitSubstitution();
+        });
+
+        mViewModel.getLocalSubstitutionsLiveData().observe(this, list -> mViewModel.setLocalSubstitutions(list));
+
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        mBinding.dateInputEdit.setText(DateFormatter.dateToString(calendar.getTime()));
+
+        mBinding.cabEditEdit.setText("-");
+    }
+
+    private void submitSubstitution() {
+        mViewModel.submitSubstitution(mBinding.dateInputEdit.getEditableText().toString(),
                 ((MaterialButton) findViewById(mBinding.pairToggleGroup.getCheckedButtonId())).getText().toString(),
                 mBinding.groupEditEdit.getEditableText().toString(),
                 mBinding.cabEditEdit.getEditableText().toString(),
                 mBinding.substitutingTeacherEdit.getEditableText().toString(),
-                mBinding.substitutingSubjectEdit.getEditableText().toString()));
-        mBinding.pairToggleGroup.check(R.id.pair1);
-        mViewModel.getLocalSubstitutionsLiveData().observe(this, list -> {
-            mViewModel.setLocalSubstitutions(list);
-        });
+                mBinding.substitutingSubjectEdit.getEditableText().toString());
     }
 
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }
