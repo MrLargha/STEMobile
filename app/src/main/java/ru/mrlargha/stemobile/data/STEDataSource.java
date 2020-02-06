@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -47,10 +46,8 @@ public class STEDataSource {
     }
 
     Result sendSubstitution(@NotNull Substitution substitution, String token) {
-        // In bicycle we trust
-        int offset = TimeZone.getDefault().getOffset(substitution.getSubstitutionDate().getTime());
         return executeCall(mSTEApi.insertSubstitution(token,
-                String.valueOf(substitution.getSubstitutionDate().getTime() + offset),
+                String.valueOf(substitution.getSubstitutionDate().getTime()),
                 substitution.getCabinet(),
                 substitution.getTeacher(),
                 substitution.getSubject(),

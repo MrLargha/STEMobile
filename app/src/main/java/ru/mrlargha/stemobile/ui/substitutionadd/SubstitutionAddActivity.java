@@ -15,7 +15,6 @@ import com.google.android.material.snackbar.Snackbar;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 import ru.mrlargha.stemobile.R;
 import ru.mrlargha.stemobile.databinding.ActivitySubstitutionAddBinding;
@@ -32,9 +31,9 @@ public class SubstitutionAddActivity extends AppCompatActivity {
 
     private MaterialDatePicker<Long> buildDatePicker() {
         CalendarConstraints.Builder calendarConstraintsBuilder = new CalendarConstraints.Builder();
-        calendarConstraintsBuilder.setValidator(new STEDateValidator(Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow")).getTimeInMillis()))
-                .setStart(Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow")).getTimeInMillis())
-                .setOpenAt(Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow")).getTimeInMillis());
+        calendarConstraintsBuilder.setValidator(new STEDateValidator(Calendar.getInstance().getTimeInMillis()))
+                .setStart(Calendar.getInstance().getTimeInMillis())
+                .setOpenAt(Calendar.getInstance().getTimeInMillis());
 
         MaterialDatePicker.Builder<Long> datePickerBuilder = MaterialDatePicker.Builder.datePicker();
         datePickerBuilder.setCalendarConstraints(calendarConstraintsBuilder.build())
