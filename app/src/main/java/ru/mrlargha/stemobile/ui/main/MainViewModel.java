@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TimeZone;
 
 import ru.mrlargha.stemobile.data.Result;
 import ru.mrlargha.stemobile.data.STERepository;
@@ -104,11 +103,12 @@ public class MainViewModel extends AndroidViewModel {
         protected final List<SimpleServerReply> doInBackground(LinkedList<Substitution>... linkedLists) {
             int progress = 20;
             publishProgress(progress);
-            Calendar reference = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
+            Calendar reference = Calendar.getInstance();
             reference.set(Calendar.HOUR_OF_DAY, reference.getActualMinimum(Calendar.HOUR_OF_DAY));
             reference.set(Calendar.MINUTE, reference.getActualMinimum(Calendar.MINUTE));
             reference.set(Calendar.SECOND, reference.getActualMinimum(Calendar.SECOND));
             reference.set(Calendar.MILLISECOND, reference.getActualMinimum(Calendar.MILLISECOND));
+
             Result<SubstitutionsReply> fromServer = steRepository.getSubstitutionsFromServer((int)
                     reference.getTime().getTime());
 

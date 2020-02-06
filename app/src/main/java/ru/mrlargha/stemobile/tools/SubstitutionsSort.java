@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.TimeZone;
 
 import ru.mrlargha.stemobile.data.model.Substitution;
 
@@ -31,7 +30,7 @@ public class SubstitutionsSort {
                                                             Date referenceDate) {
         ArrayList<Substitution> actualSubstitutions = new ArrayList<>();
         ArrayList<Substitution> irrelevantSubstitutions = new ArrayList<>();
-        Calendar reference = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
+        Calendar reference = Calendar.getInstance();
         reference.setTime(referenceDate);
         reference.set(Calendar.HOUR_OF_DAY, reference.getActualMinimum(Calendar.HOUR_OF_DAY));
         reference.set(Calendar.MINUTE, reference.getActualMinimum(Calendar.MINUTE));

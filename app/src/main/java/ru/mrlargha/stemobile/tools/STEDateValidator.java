@@ -5,11 +5,10 @@ import android.os.Parcel;
 import com.google.android.material.datepicker.CalendarConstraints;
 
 import java.util.Calendar;
-import java.util.TimeZone;
 
 public class STEDateValidator implements CalendarConstraints.DateValidator {
 
-    private Calendar utc = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
+    private Calendar utc = Calendar.getInstance();
     private long mStartDate;
 
     public static final Creator<STEDateValidator> CREATOR =
@@ -32,7 +31,7 @@ public class STEDateValidator implements CalendarConstraints.DateValidator {
     @Override
     public boolean isValid(long date) {
         utc.setTimeInMillis(date);
-        Calendar start = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
+        Calendar start = Calendar.getInstance();
         start.setTimeInMillis(mStartDate);
         return utc.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY &&
                 (start.get(Calendar.DAY_OF_YEAR) <= utc.get(Calendar.DAY_OF_YEAR)

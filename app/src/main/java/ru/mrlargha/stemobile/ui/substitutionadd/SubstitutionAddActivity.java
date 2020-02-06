@@ -39,7 +39,7 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         MaterialDatePicker.Builder<Long> datePickerBuilder = MaterialDatePicker.Builder.datePicker();
         datePickerBuilder.setCalendarConstraints(calendarConstraintsBuilder.build())
                 .setTitleText("Выберите дату замещения")
-                .setSelection(Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow")).getTimeInMillis());
+                .setSelection(Calendar.getInstance().getTimeInMillis());
         return datePickerBuilder.build();
     }
 
@@ -128,7 +128,7 @@ public class SubstitutionAddActivity extends AppCompatActivity {
 
         mViewModel.getLocalSubstitutionsLiveData().observe(this, list -> mViewModel.setLocalSubstitutions(list));
 
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
+        Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, 1);
         mBinding.dateInputEdit.setText(DateFormatter.dateToString(calendar.getTime()));
 
