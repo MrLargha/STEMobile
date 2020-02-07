@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import ru.mrlargha.stemobile.R;
 import ru.mrlargha.stemobile.databinding.ActivityMainBinding;
 import ru.mrlargha.stemobile.ui.substitutionadd.SubstitutionAddActivity;
+import ru.mrlargha.stemobile.ui.users.UsersActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -150,6 +151,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.sync) {
             mViewModel.syncSubstitutions();
+        } else if (id == R.id.logout) {
+            mViewModel.logout();
+            // TODO: Set result to Auth required and implement handling of result in login activity
+            finish();
+        } else if (id == R.id.users) {
+            startActivity(new Intent(this, UsersActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }

@@ -10,6 +10,7 @@ import java.util.List;
 import ru.mrlargha.stemobile.data.model.SimpleServerReply;
 import ru.mrlargha.stemobile.data.model.Substitution;
 import ru.mrlargha.stemobile.data.model.SubstitutionsReply;
+import ru.mrlargha.stemobile.data.model.UsersReply;
 import ru.mrlargha.stemobile.database.STEDao;
 import ru.mrlargha.stemobile.database.STERoomDatabase;
 
@@ -18,8 +19,6 @@ public class STERepository {
     private static STERepository INSTANCE;
     private STEDao steDao;
     private STEDataSource dataSource;
-
-    private boolean isSendingRequired = false;
 
     private STERepository(final Context context) {
         STERoomDatabase steRoomDatabase = STERoomDatabase.getDatabase(context);
@@ -57,5 +56,14 @@ public class STERepository {
 
     public Result<SubstitutionsReply> getSubstitutionsFromServer(int date) {
         return dataSource.getSubstitutions(LoginRepository.getInstance(dataSource).getToken(), date);
+    }
+
+    public Result<UsersReply> getUsers() {
+        return dataSource.getUsers(LoginRepository.getInstance(dataSource).getToken());
+    }
+
+    public Result<SimpleServerReply> setUserPermission(int user_id, String permission) {
+        return dataSource.setPermission(LoginRepository.getInstance(dataSource).getToken(),
+                user_id, permission);
     }
 }

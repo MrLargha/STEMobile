@@ -14,7 +14,9 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import ru.mrlargha.stemobile.data.LoginRepository;
 import ru.mrlargha.stemobile.data.Result;
+import ru.mrlargha.stemobile.data.STEDataSource;
 import ru.mrlargha.stemobile.data.STERepository;
 import ru.mrlargha.stemobile.data.model.SimpleServerReply;
 import ru.mrlargha.stemobile.data.model.Substitution;
@@ -94,6 +96,10 @@ public class MainViewModel extends AndroidViewModel {
 
     MutableLiveData<Integer> getSyncProgress() {
         return syncProgress;
+    }
+
+    void logout() {
+        LoginRepository.getInstance(new STEDataSource()).logout();
     }
 
     private class SyncTask extends AsyncTask<LinkedList<Substitution>, Integer, List<SimpleServerReply>> {

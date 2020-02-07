@@ -3,20 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="ru.mrlargha.stemobile.ui.main.MainActivity">
     <item
+        android:id="@+id/users"
+        android:icon="@drawable/ic_supervisor_account_black_24dp"
+        android:orderInCategory="10"
+        android:title="Пользователи"
+        app:showAsAction="ifRoom|collapseActionView" />
+    <item
         android:id="@+id/logout"
         android:icon="@drawable/ic_exit_to_app_black_24dp"
         android:title="Выйти"
-        app:showAsAction="ifRoom|collapseActionView|withText" />
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings_black_24dp"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         android:visible="true"
-        app:showAsAction="ifRoom|never|ifRoom|collapseActionView|withText" />
+        app:showAsAction="never|collapseActionView" />
     <item
         android:id="@+id/sync"
         android:icon="@drawable/ic_cloud_upload_black_24dp"
+        android:orderInCategory="0"
         android:title="Синхронизация"
-        app:showAsAction="ifRoom|collapseActionView|withText" />
+        app:showAsAction="ifRoom|collapseActionView" />
 </menu>

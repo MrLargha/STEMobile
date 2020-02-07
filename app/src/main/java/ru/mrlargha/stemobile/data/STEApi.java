@@ -7,6 +7,7 @@ import retrofit2.http.Query;
 import ru.mrlargha.stemobile.data.model.LoginServerReply;
 import ru.mrlargha.stemobile.data.model.SimpleServerReply;
 import ru.mrlargha.stemobile.data.model.SubstitutionsReply;
+import ru.mrlargha.stemobile.data.model.UsersReply;
 
 public interface STEApi {
     @POST("login")
@@ -31,4 +32,14 @@ public interface STEApi {
     Call<SubstitutionsReply> getSubstitutions(@Query("token") String token,
                                               @Query("date") long date);
 
+    @GET("get_users")
+    Call<UsersReply> getUsers(@Query("token") String token);
+
+    @POST("set_user_permission")
+    Call<SimpleServerReply> setPermission(@Query("token") String token,
+                                          @Query("vk_id") int vk_id,
+                                          @Query("permissions") String permission);
+
+    @POST("logout")
+    Call<SimpleServerReply> logout(@Query("token") String token);
 }

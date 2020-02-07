@@ -33,8 +33,20 @@ public class STEDataSource {
         mSTEApi = mRetrofit.create(STEApi.class);
     }
 
-    public Result login(String vk_id, String password) {
+    Result login(String vk_id, String password) {
         return executeCall(mSTEApi.login(vk_id, password));
+    }
+
+    Result logout(String token) {
+        return executeCall(mSTEApi.logout(token));
+    }
+
+    Result getUsers(String token) {
+        return executeCall(mSTEApi.getUsers(token));
+    }
+
+    Result setPermission(String token, int vk_id, String permission) {
+        return executeCall(mSTEApi.setPermission(token, vk_id, permission));
     }
 
     Result register(String vk_id, String password) {
@@ -76,8 +88,4 @@ public class STEDataSource {
         }
     }
 
-
-    public void logout() {
-        // TODO: revoke authentication
-    }
 }

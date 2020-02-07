@@ -46,13 +46,14 @@ public class LoginRepository {
     }
 
     public void logout() {
+        dataSource.logout(user.getSte_token());
         user = null;
-        dataSource.logout();
     }
 
     private void setLoggedInUser(LoginServerReply user) {
         this.user = user;
     }
+
 
     public Result<LoginServerReply> login(String username, String password) {
         Result result = dataSource.login(username, password);
