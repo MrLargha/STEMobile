@@ -1,7 +1,10 @@
 package ru.mrlargha.stemobile.ui.main;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.transition.Explode;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,6 +13,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.StorageStrategy;
@@ -37,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setExitTransition(new Explode());
+            getWindow().setEnterTransition(new Slide());
+        }
+
         super.onCreate(savedInstanceState);
 
         mBinding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -46,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
         mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         mBinding.fab.setOnClickListener(view -> {
+            Bundle options = ActivityOptionsCompat.makeScaleUpAnimation(
+                    mBinding.fab, 0, 0, mBinding.fab.getWidth(),
+                    mBinding.fab.getHeight()).toBundle();
             Intent i = new Intent(MainActivity.this, SubstitutionAddActivity.class);
             startActivity(i);
         });

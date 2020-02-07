@@ -1,7 +1,10 @@
 package ru.mrlargha.stemobile.ui.substitutionadd;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
+import android.transition.Explode;
+import android.transition.Slide;
 import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,6 +51,11 @@ public class SubstitutionAddActivity extends AppCompatActivity {
         mBinding = ActivitySubstitutionAddBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
         setSupportActionBar(mBinding.toolbar2);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setExitTransition(new Explode());
+            getWindow().setEnterTransition(new Slide());
+        }
 
         mViewModel = new ViewModelProvider(this).get(SubstitutionAddViewModel.class);
         mViewModel.getFormState().observe(this, formState -> {
