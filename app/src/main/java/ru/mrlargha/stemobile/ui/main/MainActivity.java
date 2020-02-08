@@ -93,9 +93,11 @@ public class MainActivity extends AppCompatActivity {
                             mSelectionTracker.getSelection().size());
                     mActionMode = startSupportActionMode(new SubstitutionActionModeCallback(
                             MainActivity.this, mSelectionTracker));
+                    setTheme(R.style.STEToolbarTheme);
                 } else if (!mSelectionTracker.hasSelection() && mActionMode != null) {
                     mActionMode.finish();
                     mActionMode = null;
+                    setTheme(R.style.AppTheme);
                 }
             }
         });
