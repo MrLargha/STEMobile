@@ -5,6 +5,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.transition.Explode;
 import android.transition.Slide;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,8 +68,37 @@ public class SubstitutionAddActivity extends AppCompatActivity {
             mBinding.substitutingTeacher.setError(formState.getTeacherError());
             mBinding.substitutingSubject.setError(formState.getSubjectError());
             if (formState.hasErrors() && formState.getCustomError() != null) {
-                Snackbar.make(mBinding.coordinator, formState.getCustomError(),
-                              Snackbar.LENGTH_SHORT).setTextColor(getResources().getColor(R.color.colorAccent)).show();
+                mBinding.vihuhol.setVisibility(View.VISIBLE);
+                mBinding.vihuholError.setVisibility(View.VISIBLE);
+                mBinding.vihuholError.setText(formState.getCustomError());
+                TranslateAnimation animate = new TranslateAnimation(
+                        mBinding.getRoot().getWidth(),
+                        0,
+                        0,  // FROM Y DELTA
+                        0);
+                animate.setDuration(3000);
+
+                animate.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        mBinding.vihuholError.setVisibility(View.GONE);
+                        mBinding.vihuhol.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                mBinding.vihuhol.startAnimation(animate);
+                mBinding.vihuholError.startAnimation(animate);
+//                Snackbar.make(mBinding.coordinator, formState.getCustomError(),
+//                              Snackbar.LENGTH_SHORT).setTextColor(getResources().getColor(R.color.colorAccent)).show();
             } else if (!formState.hasErrors()) {
                 Snackbar.make(mBinding.coordinator, "Замещение добавлено в локальное хранилище",
                               Snackbar.LENGTH_SHORT).show();
