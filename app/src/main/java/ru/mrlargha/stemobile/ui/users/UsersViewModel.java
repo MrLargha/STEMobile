@@ -30,6 +30,7 @@ public class UsersViewModel extends AndroidViewModel {
     }
 
     void setUserPermission(User user) {
+        hasNetworkOperationInProgress.setValue(true);
         new SetUserPermissionTask().execute(String.valueOf(user.getVk_id()), user.getPermissions());
     }
 

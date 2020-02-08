@@ -107,7 +107,7 @@ public class MainViewModel extends AndroidViewModel {
         @SafeVarargs
         @Override
         protected final List<SimpleServerReply> doInBackground(LinkedList<Substitution>... linkedLists) {
-            int progress = 20;
+            int progress = 0;
             publishProgress(progress);
             Calendar reference = Calendar.getInstance();
             reference.set(Calendar.HOUR_OF_DAY, reference.getActualMinimum(Calendar.HOUR_OF_DAY));
@@ -135,7 +135,7 @@ public class MainViewModel extends AndroidViewModel {
                     }
                 }
             }
-            progress = 50;
+            progress = 1;
             publishProgress(progress);
             LinkedList<Substitution> pendingSubstitutions = new LinkedList<>();
             if (substitutionsList.getValue() != null) {
@@ -164,7 +164,7 @@ public class MainViewModel extends AndroidViewModel {
                     steRepository.setSubstitutionStatus(substitution.getID(),
                             Substitution.STATUS_ERROR);
                 }
-                progress += 50 / pendingSubstitutions.size();
+                progress += 99 / pendingSubstitutions.size();
                 publishProgress(progress);
             }
             return replies;

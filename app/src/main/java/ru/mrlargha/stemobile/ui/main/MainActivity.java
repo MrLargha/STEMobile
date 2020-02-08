@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                     mBinding.fab, 0, 0, mBinding.fab.getWidth(),
                     mBinding.fab.getHeight()).toBundle();
             Intent i = new Intent(MainActivity.this, SubstitutionAddActivity.class);
-            startActivity(i);
+            startActivity(i, options);
         });
 
 
@@ -79,9 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 substitutionKeyProvider,
                 new SubstitutionLookup(mBinding.content.substitutionsRecylcler),
                 StorageStrategy.createLongStorage()
-        ).withOnDragInitiatedListener(e -> {
-            return true;
-        }).build();
+        ).withOnDragInitiatedListener(e -> true).build();
 
         if (savedInstanceState != null) {
             mSelectionTracker.onRestoreInstanceState(savedInstanceState);
@@ -119,11 +117,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mViewModel.getSyncProgress().observe(this, progress -> {
-            if (progress > -1) {
+            if (progress == -1) {
+                mBinding.content.progressBar.setVisibility(View.GONE);
+            } else if (progress == 0) {
+                mBinding.content.progressBar.setIndeterminate(true);
+                mBinding.content.progressBar.setVisibility(View.VISIBLE);
+            } else {
+                mBinding.content.progressBar.setIndeterminate(false);
                 mBinding.content.progressBar.setVisibility(View.VISIBLE);
                 mBinding.content.progressBar.setProgress(progress);
-            } else {
-                mBinding.content.progressBar.setVisibility(View.GONE);
             }
         });
     }

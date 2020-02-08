@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.mrlargha.stemobile.R;
 import ru.mrlargha.stemobile.data.model.User;
 import ru.mrlargha.stemobile.databinding.ActivityUsersBinding;
 import ru.mrlargha.stemobile.databinding.UserViewBinding;
@@ -27,6 +28,8 @@ public class UsersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mBinding = ActivityUsersBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+
+        setSupportActionBar(mBinding.toolbar);
 
         mViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
 
@@ -80,13 +83,28 @@ public class UsersActivity extends AppCompatActivity {
             void bind(User user) {
                 mUserViewBinding.userName.setText(user.getName());
                 mUserViewBinding.groupText.setText("C" + user.getGroup());
-                mUserViewBinding.isModeratorSwitch.setChecked(!user.getPermissions().equals("regular"));
-                mUserViewBinding.isModeratorSwitch.setEnabled(!user.getPermissions().equals("admin"));
-                mUserViewBinding.isModeratorSwitch.setText(user.getPermissions());
-                mUserViewBinding.isModeratorSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    user.setPermissions(isChecked ? "moderator" : "regular");
-                    mUserViewBinding.isModeratorSwitch.setText(user.getPermissions());
-                    mViewModel.setUserPermission(user);
+                if (user.getPermissions().equals("admin")) {
+                    mUserViewBinding.userToggle.setEnabled(false);
+                    mUserViewBinding.moderToggle.setEnabled(false);
+                    mUserViewBinding.adminText.setVisibility(View.VISIBLE);
+                } else {
+                    mUserViewBinding.adminText.setVisibility(View.GONE);
+                    if (user.getPermissions().equals("regular")) {
+                        mUserViewBinding.pairToggleGroup.check(R.id.userToggle);
+                    } else {
+                        mUserViewBinding.pairToggleGroup.check(R.id.moderToggle);
+                    }
+                }
+
+                mUserViewBinding.pairToggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+                    if (isChecked) {
+                        if (checkedId == R.id.userToggle) {
+                            user.setPermissions("regular");
+                        } else {
+                            user.setPermissions("moderator");
+                        }
+                        mViewModel.setUserPermission(user);
+                    }
                 });
             }
         }
