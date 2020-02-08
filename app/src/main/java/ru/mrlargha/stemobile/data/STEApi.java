@@ -40,6 +40,6 @@ public interface STEApi {
                                           @Query("vk_id") int vk_id,
                                           @Query("permissions") String permission);
 
-    @POST("logout")
+    @GET("logout")
     Call<SimpleServerReply> logout(@Query("token") String token);
 }

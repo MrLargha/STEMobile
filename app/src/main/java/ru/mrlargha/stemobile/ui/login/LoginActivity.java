@@ -27,19 +27,27 @@ public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
 
+    private TextInputEditText usernameEditText;
+    private TextInputEditText passwordEditText;
+    private TextInputLayout passwordLayout;
+    private TextInputLayout usernameLayout;
+    private MaterialButton loginButton;
+    private MaterialButton registerButton;
+    private ProgressBar loadingProgressBar;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
-        final TextInputEditText usernameEditText = findViewById(R.id.vk_id_input);
-        final TextInputEditText passwordEditText = findViewById(R.id.password_input);
-        final TextInputLayout passwordLayout = findViewById(R.id.password);
-        final TextInputLayout usernameLayout = findViewById(R.id.vk_id);
-        final MaterialButton loginButton = findViewById(R.id.login);
-        final MaterialButton registerButton = findViewById(R.id.register);
-        final ProgressBar loadingProgressBar = findViewById(R.id.loading);
+        usernameEditText = findViewById(R.id.vk_id_input);
+        passwordEditText = findViewById(R.id.password_input);
+        passwordLayout = findViewById(R.id.password);
+        usernameLayout = findViewById(R.id.vk_id);
+        loginButton = findViewById(R.id.login);
+        registerButton = findViewById(R.id.register);
+        loadingProgressBar = findViewById(R.id.loading);
 
         loginViewModel.getLoginFormState().observe(this, loginFormState -> {
             if (loginFormState == null) {
@@ -67,7 +75,6 @@ public class LoginActivity extends AppCompatActivity {
             }
             if (loginResult.getSuccess() != null) {
                 updateUiWithUser(loginResult.getSuccess());
-                finish();
             }
         });
 
@@ -90,6 +97,7 @@ public class LoginActivity extends AppCompatActivity {
         };
         usernameEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
+
         passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 loginViewModel.login(usernameEditText.getText().toString(),
@@ -102,12 +110,16 @@ public class LoginActivity extends AppCompatActivity {
             loadingProgressBar.setVisibility(View.VISIBLE);
             loginViewModel.login(usernameEditText.getText().toString(),
                     passwordEditText.getText().toString());
+            SharedPreferences sp = getSharedPreferences("keystore", MODE_PRIVATE);
+            sp.edit().putString("vk_id", usernameEditText.getText().toString()).apply();
         });
 
         registerButton.setOnClickListener(v -> {
             loadingProgressBar.setVisibility(View.VISIBLE);
             loginViewModel.register(usernameEditText.getText().toString(),
                     passwordEditText.getText().toString());
+            SharedPreferences sp = getSharedPreferences("keystore", MODE_PRIVATE);
+            sp.edit().putString("vk_id", usernameEditText.getText().toString()).apply();
         });
 
         passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
@@ -121,22 +133,24 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         });
 
-
         String token = getSharedPreferences("keystore", MODE_PRIVATE).getString("ste_token", "");
+        String vk_id = getSharedPreferences("keystore", MODE_PRIVATE).getString("vk_id", "");
         if (!token.isEmpty()) {
             loadingProgressBar.setVisibility(View.VISIBLE);
             loginViewModel.getInfo(token);
+        } else if (!vk_id.isEmpty()) {
+            usernameEditText.setText(vk_id);
         }
 
     }
 
     private void updateUiWithUser(LoginServerReply model) {
-        String welcome = getString(R.string.welcome) + ' ' + model.getName() + '!';
+        String welcome = getString(R.string.welcome) + ", " + model.getName() + '!';
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
         SharedPreferences sp = getSharedPreferences("keystore", MODE_PRIVATE);
         sp.edit().putString("ste_token", model.getSte_token()).apply();
         startActivityForResult(new Intent(this, MainActivity.class),
-                               MainActivity.REQUEST_CODE);
+                MainActivity.REQUEST_CODE);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
@@ -149,6 +163,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == MainActivity.REQUEST_CODE) {
             if (resultCode == MainActivity.CODE_LOGOUT) {
+                SharedPreferences sp = getSharedPreferences("keystore", MODE_PRIVATE);
+                sp.edit().putString("ste_token", "").apply();
+                passwordEditText.setText("");
                 loginViewModel.logout();
             } else {
                 finish();

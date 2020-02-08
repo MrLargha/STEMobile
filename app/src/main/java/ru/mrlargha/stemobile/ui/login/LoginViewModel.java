@@ -66,13 +66,21 @@ public class LoginViewModel extends ViewModel {
     }
 
     public void logout() {
-        loginRepository.logout();
+        new LogoutTask().execute();
     }
 
     private class LoginTask extends AuthTask {
         @Override
         protected Result<LoginServerReply> doInBackground(String... strings) {
             return loginRepository.login(strings[0], strings[1]);
+        }
+    }
+
+    private class LogoutTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            loginRepository.logout();
+            return null;
         }
     }
 
