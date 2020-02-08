@@ -13,7 +13,6 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.StorageStrategy;
@@ -30,6 +29,10 @@ import ru.mrlargha.stemobile.ui.substitutionadd.SubstitutionAddActivity;
 import ru.mrlargha.stemobile.ui.users.UsersActivity;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final int CODE_NORMAL = 0;
+    public static final int CODE_LOGOUT = 1;
+    public static final int REQUEST_CODE = 100;
 
     private static final String TAG = "stemobile";
     private MainViewModel mViewModel;
@@ -56,11 +59,8 @@ public class MainActivity extends AppCompatActivity {
         mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         mBinding.fab.setOnClickListener(view -> {
-            Bundle options = ActivityOptionsCompat.makeScaleUpAnimation(
-                    mBinding.fab, 0, 0, mBinding.fab.getWidth(),
-                    mBinding.fab.getHeight()).toBundle();
             Intent i = new Intent(MainActivity.this, SubstitutionAddActivity.class);
-            startActivity(i, options);
+            startActivity(i);
         });
 
 
@@ -154,13 +154,18 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.sync) {
             mViewModel.syncSubstitutions();
         } else if (id == R.id.logout) {
-            mViewModel.logout();
-            // TODO: Set result to Auth required and implement handling of result in login activity
+            setResult(CODE_LOGOUT);
             finish();
         } else if (id == R.id.users) {
             startActivity(new Intent(this, UsersActivity.class));
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

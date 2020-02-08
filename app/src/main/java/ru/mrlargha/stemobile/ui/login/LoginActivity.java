@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -134,10 +135,24 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
         SharedPreferences sp = getSharedPreferences("keystore", MODE_PRIVATE);
         sp.edit().putString("ste_token", model.getSte_token()).apply();
-        startActivity(new Intent(this, MainActivity.class));
+        startActivityForResult(new Intent(this, MainActivity.class),
+                               MainActivity.REQUEST_CODE);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     private void showLoginFailed(String errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MainActivity.REQUEST_CODE) {
+            if (resultCode == MainActivity.CODE_LOGOUT) {
+                loginViewModel.logout();
+            } else {
+                finish();
+            }
+        }
     }
 }

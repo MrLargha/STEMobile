@@ -65,6 +65,10 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
+    public void logout() {
+        loginRepository.logout();
+    }
+
     private class LoginTask extends AuthTask {
         @Override
         protected Result<LoginServerReply> doInBackground(String... strings) {
