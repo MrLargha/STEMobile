@@ -159,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         } else if (id == R.id.users) {
             startActivity(new Intent(this, UsersActivity.class));
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }
         return super.onOptionsItemSelected(item);
     }
