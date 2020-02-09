@@ -9,6 +9,7 @@ import java.util.List;
 
 import ru.mrlargha.stemobile.data.model.SimpleServerReply;
 import ru.mrlargha.stemobile.data.model.Substitution;
+import ru.mrlargha.stemobile.data.model.SubstitutionFormHints;
 import ru.mrlargha.stemobile.data.model.SubstitutionsReply;
 import ru.mrlargha.stemobile.data.model.UsersReply;
 import ru.mrlargha.stemobile.database.STEDao;
@@ -49,6 +50,10 @@ public class STERepository {
 
     public LiveData<List<Substitution>> getAllSubstitutions() {
         return steDao.getAllSubstitutions();
+    }
+
+    public Result<SubstitutionFormHints> getFormHints() {
+        return dataSource.getFormHints();
     }
 
     public void setSubstitutionStatus(int id, String status) {

@@ -1,6 +1,7 @@
 package ru.mrlargha.stemobile.ui.substitutionadd;
 
 import android.app.Application;
+import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -9,16 +10,17 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import ru.mrlargha.stemobile.data.LoginRepository;
+import ru.mrlargha.stemobile.data.Result;
 import ru.mrlargha.stemobile.data.STEDataSource;
 import ru.mrlargha.stemobile.data.STERepository;
 import ru.mrlargha.stemobile.data.model.Substitution;
+import ru.mrlargha.stemobile.data.model.SubstitutionFormHints;
 import ru.mrlargha.stemobile.tools.DateFormatter;
 import ru.mrlargha.stemobile.tools.STEDateValidator;
 
@@ -38,11 +40,9 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
     public SubstitutionAddViewModel(@NonNull Application application) {
         super(application);
         steRepository = STERepository.getRepository(application.getApplicationContext());
-
-        loadTeachers();
-        loadSubjects();
-        loadGroups();
         localSubstitutionsLiveData = steRepository.getAllSubstitutions();
+
+        new HitsFetchTask().execute();
     }
 
     private boolean isDateValid(String date) {
@@ -137,23 +137,7 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
         return teachersList;
     }
 
-    private void loadTeachers() {
-        ArrayList<String> teachers = new ArrayList<>(Arrays.asList("Густова Т.А", "Юрьева И.А",
-                "Рохманько И.Л", "Горбунова О.А", "Опалева У.С", "Куликов Д.Д"));
-        teachersList.setValue(teachers);
-    }
-
-    private void loadSubjects() {
-        ArrayList<String> teachers = new ArrayList<>(Arrays.asList("МДК 01.01", "МДК 01.02",
-                "Математика", "Информатика", "Литература", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."));
-        subjectsList.setValue(teachers);
-    }
-
-    private void loadGroups() {
-        groupsList = new ArrayList<>(Arrays.asList("822", "821", "724"));
-    }
-
-    public LiveData<List<Substitution>> getLocalSubstitutionsLiveData() {
+    LiveData<List<Substitution>> getLocalSubstitutionsLiveData() {
         return localSubstitutionsLiveData;
     }
 
@@ -161,7 +145,31 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
         return localSubstitutions;
     }
 
-    public void setLocalSubstitutions(List<Substitution> localSubstitutions) {
+    void setLocalSubstitutions(List<Substitution> localSubstitutions) {
         this.localSubstitutions = localSubstitutions;
     }
+
+    private class HitsFetchTask extends AsyncTask<Void, Void, SubstitutionFormHints> {
+
+        @Override
+        protected SubstitutionFormHints doInBackground(Void... voids) {
+            Result<SubstitutionFormHints> result = steRepository.getFormHints();
+            if (result instanceof Result.Success) {
+                return (SubstitutionFormHints) ((Result.Success) result).getData();
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(SubstitutionFormHints substitutionFormHints) {
+            super.onPostExecute(substitutionFormHints);
+            if (substitutionFormHints != null) {
+                subjectsList.postValue(new ArrayList<>(substitutionFormHints.getSubjects()));
+                groupsList = new ArrayList<>(substitutionFormHints.getGroups());
+                teachersList.postValue(new ArrayList<>(substitutionFormHints.getTeachers()));
+            }
+        }
+    }
+
 }

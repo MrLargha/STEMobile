@@ -6,6 +6,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 import ru.mrlargha.stemobile.data.model.LoginServerReply;
 import ru.mrlargha.stemobile.data.model.SimpleServerReply;
+import ru.mrlargha.stemobile.data.model.SubstitutionFormHints;
 import ru.mrlargha.stemobile.data.model.SubstitutionsReply;
 import ru.mrlargha.stemobile.data.model.UsersReply;
 
@@ -48,4 +49,7 @@ public interface STEApi {
 
     @GET("logout")
     Call<SimpleServerReply> logout(@Query("token") String token);
+
+    @GET("form_hints")
+    Call<SubstitutionFormHints> getFormHints();
 }

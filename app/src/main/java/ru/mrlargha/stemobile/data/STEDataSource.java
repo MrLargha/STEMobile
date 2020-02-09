@@ -60,6 +60,10 @@ public class STEDataSource {
         return executeCall(mSTEApi.register(vk_id, password));
     }
 
+    Result getFormHints() {
+        return executeCall(mSTEApi.getFormHints());
+    }
+
     Result getInfo(String token) {
         return executeCall(mSTEApi.getInfo(token));
     }
