@@ -6,6 +6,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import ru.mrlargha.stemobile.R;
 import ru.mrlargha.stemobile.data.LoginRepository;
 import ru.mrlargha.stemobile.data.Result;
@@ -27,11 +30,11 @@ public class LoginViewModel extends ViewModel {
     }
 
     public void login(String username, String password) {
-        new LoginTask().execute(username, password);
+        new LoginTask().execute(username, hash(password));
     }
 
     void register(String username, String password) {
-        new RegisterTask().execute(username, password);
+        new RegisterTask().execute(username, hash(password));
     }
 
     void getInfo(String token) {
@@ -108,6 +111,20 @@ public class LoginViewModel extends ViewModel {
         @Override
         protected void onPostExecute(Result<LoginServerReply> loggedInUserResult) {
             handleLoginResult(loggedInUserResult);
+        }
+    }
+
+    private String hash(String s) {
+        try {
+            MessageDigest digest = java.security.MessageDigest.getInstance("sha256");
+            digest.update(s.getBytes());
+            byte[] messageDigest = digest.digest();
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : messageDigest) hexString.append(Integer.toHexString(0xFF & b));
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            return "";
         }
     }
 }
