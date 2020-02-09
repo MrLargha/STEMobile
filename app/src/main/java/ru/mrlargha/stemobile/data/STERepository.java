@@ -38,8 +38,13 @@ public class STERepository {
         STERoomDatabase.getDatabaseExecutor().execute(() -> steDao.insertSubstitution(substitution));
     }
 
-    public void deleteSubstitution(long uid) {
-        STERoomDatabase.getDatabaseExecutor().execute(() -> steDao.deleteByUID(uid));
+    public boolean deleteSubstitution(Substitution substitution) {
+        if (dataSource.deleteSubstitution(LoginRepository.getInstance(dataSource).getToken(), substitution)
+                instanceof Result.Success) {
+            STERoomDatabase.getDatabaseExecutor().execute(() -> steDao.deleteByUID(substitution.getID()));
+            return true;
+        }
+        return false;
     }
 
     public LiveData<List<Substitution>> getAllSubstitutions() {

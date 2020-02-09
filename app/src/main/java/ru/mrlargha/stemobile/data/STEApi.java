@@ -32,6 +32,12 @@ public interface STEApi {
     Call<SubstitutionsReply> getSubstitutions(@Query("token") String token,
                                               @Query("date") long date);
 
+    @POST("delete_substitution")
+    Call<SimpleServerReply> deleteSubstitution(@Query("token") String token,
+                                               @Query("date") String date,
+                                               @Query("group") String group,
+                                               @Query("pair") String pair);
+
     @GET("get_users")
     Call<UsersReply> getUsers(@Query("token") String token);
 

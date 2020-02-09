@@ -52,7 +52,7 @@ public class MainViewModel extends AndroidViewModel {
                     } else {
                         serverDel++;
                     }
-                    steRepository.deleteSubstitution(substitution.getID());
+                    new DeleteTask().execute(substitution);
                 }
             }
         }
@@ -94,6 +94,15 @@ public class MainViewModel extends AndroidViewModel {
 
     MutableLiveData<Integer> getSyncProgress() {
         return syncProgress;
+    }
+
+    private class DeleteTask extends AsyncTask<Substitution, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Substitution... substitutions) {
+            steRepository.deleteSubstitution(substitutions[0]);
+            return null;
+        }
     }
 
     private class SyncTask extends AsyncTask<LinkedList<Substitution>, Integer, List<SimpleServerReply>> {

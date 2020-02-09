@@ -41,6 +41,13 @@ public class STEDataSource {
         return executeCall(mSTEApi.logout(token));
     }
 
+    Result deleteSubstitution(String token, Substitution substitution) {
+        return executeCall(mSTEApi.deleteSubstitution(token,
+                String.valueOf(substitution.getSubstitutionDate().getTime()),
+                String.valueOf(substitution.getGroup()),
+                String.valueOf(substitution.getPair())));
+    }
+
     Result getUsers(String token) {
         return executeCall(mSTEApi.getUsers(token));
     }
