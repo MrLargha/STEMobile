@@ -181,7 +181,7 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 binding.status.setText("\u2022 Ошибка синхронизации");
                 binding.status.setTextColor(Color.RED);
             }
-            this.binding.name.setText("Богданов Андрей");
+            this.binding.name.setText(substitution.getAuthor());
             itemView.setActivated(selected);
         }
     }
