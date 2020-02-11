@@ -40,7 +40,7 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
     public SubstitutionAddViewModel(@NonNull Application application) {
         super(application);
         steRepository = STERepository.getRepository(application.getApplicationContext());
-        localSubstitutionsLiveData = steRepository.getAllSubstitutions();
+        localSubstitutionsLiveData = steRepository.getSubstitutions();
 
         new HitsFetchTask().execute();
     }

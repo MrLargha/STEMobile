@@ -5,6 +5,10 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
 import ru.mrlargha.stemobile.data.model.SimpleServerReply;
@@ -48,8 +52,39 @@ public class STERepository {
         return false;
     }
 
-    public LiveData<List<Substitution>> getAllSubstitutions() {
+    public LiveData<List<Substitution>> getSubstitutions() {
         return steDao.getAllSubstitutions();
+    }
+
+    public void downloadUpdate() throws SynchronizationException {
+        Calendar reference = Calendar.getInstance();
+        reference.set(Calendar.HOUR_OF_DAY, reference.getActualMinimum(Calendar.HOUR_OF_DAY));
+        reference.set(Calendar.MINUTE, reference.getActualMinimum(Calendar.MINUTE));
+        reference.set(Calendar.SECOND, reference.getActualMinimum(Calendar.SECOND));
+        reference.set(Calendar.MILLISECOND, reference.getActualMinimum(Calendar.MILLISECOND));
+
+        Result<SubstitutionsReply> serverSubstitutions
+                = getSubstitutionsFromServer((int) reference.getTime().getTime());
+        LinkedList<Substitution> localSubstitutions =
+                new LinkedList<>(Arrays.asList(steDao.getAllSubstitutionsSync()));
+        if (serverSubstitutions instanceof Result.Success) {
+            for (Substitution serverSubstitution : ((SubstitutionsReply) ((Result.Success)
+                    serverSubstitutions).getData()).getSubstitutions()) {
+                boolean hasOnClient = false;
+                for (Substitution localSubstitution : localSubstitutions) {
+                    if (localSubstitution.fullEquals(serverSubstitution)) {
+                        hasOnClient = true;
+                        break;
+                    }
+                }
+                if (!hasOnClient) {
+                    serverSubstitution.setStatus(Substitution.STATUS_SYNCHRONIZED);
+                    insertSubstitutionToDB(serverSubstitution);
+                }
+            }
+        } else {
+            throw new SynchronizationException(((Result.Error) serverSubstitutions).getErrorString());
+        }
     }
 
     public Result<SubstitutionFormHints> getFormHints() {
@@ -74,6 +109,12 @@ public class STERepository {
 
     public Result<SimpleServerReply> setUserPermission(int user_id, String permission) {
         return dataSource.setPermission(LoginRepository.getInstance(dataSource).getToken(),
-                user_id, permission);
+                                        user_id, permission);
+    }
+
+    public static class SynchronizationException extends IOException {
+        SynchronizationException(String message) {
+            super(message);
+        }
     }
 }

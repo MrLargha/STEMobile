@@ -28,15 +28,14 @@ public class MainViewModel extends AndroidViewModel {
     private LiveData<List<Substitution>> substitutionsList;
     private MutableLiveData<Integer> syncProgress = new MutableLiveData<>(-1);
     private MutableLiveData<String> undoString = new MutableLiveData<>();
-
+    private MutableLiveData<String> errorString = new MutableLiveData<>("");
     private ArrayList<Substitution> savedSubstitutions = new ArrayList<>();
 
 
     public MainViewModel(@NonNull Application application) {
         super(application);
-        Log.d(TAG, "MainViewModel: created");
         steRepository = STERepository.getRepository(application.getApplicationContext());
-        substitutionsList = steRepository.getAllSubstitutions();
+        substitutionsList = steRepository.getSubstitutions();
     }
 
     void deleteSubstitutions(ArrayList<Long> ids) {
@@ -122,22 +121,7 @@ public class MainViewModel extends AndroidViewModel {
                     reference.getTime().getTime());
 
             // Find conflicts with the remote
-            if (fromServer instanceof Result.Success) {
-                for (Substitution serverSubstitution : ((SubstitutionsReply) ((Result.Success)
-                        fromServer).getData()).getSubstitutions()) {
-                    boolean hasOnClient = false;
-                    for (Substitution localSubstitution : linkedLists[0]) {
-                        if (localSubstitution.fullEquals(serverSubstitution)) {
-                            hasOnClient = true;
-                            break;
-                        }
-                    }
-                    if (!hasOnClient) {
-                        serverSubstitution.setStatus(Substitution.STATUS_SYNCHRONIZED);
-                        steRepository.insertSubstitutionToDB(serverSubstitution);
-                    }
-                }
-            }
+
             progress = 1;
             publishProgress(progress);
             LinkedList<Substitution> pendingSubstitutions = new LinkedList<>();
@@ -164,8 +148,7 @@ public class MainViewModel extends AndroidViewModel {
                                 Substitution.STATUS_ERROR);
                     }
                 } else {
-                    steRepository.setSubstitutionStatus(substitution.getID(),
-                            Substitution.STATUS_ERROR);
+                    errorString.postValue("Ошибка синхронизации: " + ((Result.Error) result).getErrorString());
                 }
                 progress += 99 / pendingSubstitutions.size();
                 publishProgress(progress);

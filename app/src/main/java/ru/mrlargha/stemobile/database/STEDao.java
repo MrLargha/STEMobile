@@ -21,6 +21,9 @@ public interface STEDao {
     @Query("SELECT * FROM substitutions_table ORDER BY substitutionDate, `group`, pair")
     LiveData<List<Substitution>> getAllSubstitutions();
 
+    @Query("SELECT * FROM substitutions_table ORDER BY substitutionDate, `group`, pair")
+    Substitution[] getAllSubstitutionsSync();
+
     @Query("DELETE FROM substitutions_table")
     void deleteAll();
 
