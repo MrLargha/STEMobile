@@ -10,15 +10,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.LinkedList;
 import java.util.List;
 
-import ru.mrlargha.stemobile.data.Result;
 import ru.mrlargha.stemobile.data.STERepository;
-import ru.mrlargha.stemobile.data.model.SimpleServerReply;
 import ru.mrlargha.stemobile.data.model.Substitution;
-import ru.mrlargha.stemobile.data.model.SubstitutionsReply;
 
 public class MainViewModel extends AndroidViewModel {
     private static final String TAG = "stemobile";
@@ -88,7 +83,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     void syncSubstitutions() {
-        new SyncTask().execute(new LinkedList<>(substitutionsList.getValue()));
+        new FetchTask().execute();
     }
 
     MutableLiveData<Integer> getSyncProgress() {
@@ -104,69 +99,48 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
-    private class SyncTask extends AsyncTask<LinkedList<Substitution>, Integer, List<SimpleServerReply>> {
+    private class FetchTask extends AsyncTask<Void, Integer, Void> {
 
-        @SafeVarargs
         @Override
-        protected final List<SimpleServerReply> doInBackground(LinkedList<Substitution>... linkedLists) {
-            int progress = 0;
-            publishProgress(progress);
-            Calendar reference = Calendar.getInstance();
-            reference.set(Calendar.HOUR_OF_DAY, reference.getActualMinimum(Calendar.HOUR_OF_DAY));
-            reference.set(Calendar.MINUTE, reference.getActualMinimum(Calendar.MINUTE));
-            reference.set(Calendar.SECOND, reference.getActualMinimum(Calendar.SECOND));
-            reference.set(Calendar.MILLISECOND, reference.getActualMinimum(Calendar.MILLISECOND));
-
-            Result<SubstitutionsReply> fromServer = steRepository.getSubstitutionsFromServer((int)
-                    reference.getTime().getTime());
-
-            // Find conflicts with the remote
-
-            progress = 1;
-            publishProgress(progress);
-            LinkedList<Substitution> pendingSubstitutions = new LinkedList<>();
-            if (substitutionsList.getValue() != null) {
-                for (Substitution substitution : linkedLists[0]) {
-                    if (substitution.getStatus().equals(Substitution.STATUS_NOT_SYNCHRONIZED)) {
-                        pendingSubstitutions.add(substitution);
-                    }
-                }
+        protected final Void doInBackground(Void... voids) {
+            try {
+                steRepository.downloadUpdate();
+            } catch (STERepository.SynchronizationException e) {
+                errorString.postValue(e.getMessage());
             }
-
-
-            LinkedList<SimpleServerReply> replies = new LinkedList<>();
-            for (Substitution substitution : pendingSubstitutions) {
-                Result result = steRepository.sendSubstitution(substitution);
-                if (result instanceof Result.Success) {
-                    SimpleServerReply reply = ((Result.Success<SimpleServerReply>) result).getData();
-                    replies.add(reply);
-                    if (reply.getStatus().equals("ok")) {
-                        steRepository.setSubstitutionStatus(substitution.getID(),
-                                Substitution.STATUS_SYNCHRONIZED);
-                    } else {
-                        steRepository.setSubstitutionStatus(substitution.getID(),
-                                Substitution.STATUS_ERROR);
-                    }
-                } else {
-                    errorString.postValue("Ошибка синхронизации: " + ((Result.Error) result).getErrorString());
-                }
-                progress += 99 / pendingSubstitutions.size();
-                publishProgress(progress);
-            }
-            return replies;
+            return null;
+//            LinkedList<SimpleServerReply> replies = new LinkedList<>();
+//            for (Substitution substitution : pendingSubstitutions) {
+//                Result result = steRepository.sendSubstitution(substitution);
+//                if (result instanceof Result.Success) {
+//                    SimpleServerReply reply = ((Result.Success<SimpleServerReply>) result).getData();
+//                    replies.add(reply);
+//                    if (reply.getStatus().equals("ok")) {
+//                        steRepository.setSubstitutionStatus(substitution.getID(),
+//                                Substitution.STATUS_SYNCHRONIZED);
+//                    } else {
+//                        steRepository.setSubstitutionStatus(substitution.getID(),
+//                                Substitution.STATUS_ERROR);
+//                    }
+//                } else {
+//                    errorString.postValue("Ошибка синхронизации: " + ((Result.Error) result).getErrorString());
+//                }
+//                progress += 99 / pendingSubstitutions.size();
+//                publishProgress(progress);
+//            }
+//            return replies;
         }
 
         @Override
-        protected void onPostExecute(List<SimpleServerReply> simpleServerReplies) {
-            super.onPostExecute(simpleServerReplies);
-            syncProgress.setValue(-1);
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
         }
 
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
             syncProgress.setValue(values[0]);
-            Log.d(TAG, "onProgressUpdate: Progress " + values[0]);
+            Log.d(TAG, "onFetchProgressUpdate: Progress " + values[0]);
         }
     }
 }
