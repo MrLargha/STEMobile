@@ -37,7 +37,7 @@ public interface STEDao {
 
     @TypeConverters({DateConverter.class})
     @Query("SELECT * FROM substitutions_table WHERE status = 'NOT_SYNCHRONIZED'")
-    LiveData<List<Substitution>> getUnSyncSubstitutions();
+    Substitution[] getUnSyncSubstitutions();
 
     @TypeConverters({DateConverter.class})
     @Query("UPDATE substitutions_table SET status = :status WHERE uid = :substitutionId")

@@ -56,6 +56,14 @@ public class STERepository {
         return steDao.getAllSubstitutions();
     }
 
+    private LinkedList<Substitution> getSubstitutionsSync() {
+        return new LinkedList<>(Arrays.asList(steDao.getAllSubstitutionsSync()));
+    }
+
+    public LinkedList<Substitution> getUnSyncSubstitutions() {
+        return new LinkedList<>(Arrays.asList(steDao.getUnSyncSubstitutions()));
+    }
+
     public void downloadUpdate() throws SynchronizationException {
         Calendar reference = Calendar.getInstance();
         reference.set(Calendar.HOUR_OF_DAY, reference.getActualMinimum(Calendar.HOUR_OF_DAY));
@@ -65,8 +73,7 @@ public class STERepository {
 
         Result<SubstitutionsReply> serverSubstitutions
                 = getSubstitutionsFromServer((int) reference.getTime().getTime());
-        LinkedList<Substitution> localSubstitutions =
-                new LinkedList<>(Arrays.asList(steDao.getAllSubstitutionsSync()));
+        LinkedList<Substitution> localSubstitutions = getSubstitutionsSync();
         if (serverSubstitutions instanceof Result.Success) {
             for (Substitution serverSubstitution : ((SubstitutionsReply) ((Result.Success)
                     serverSubstitutions).getData()).getSubstitutions()) {
@@ -99,7 +106,7 @@ public class STERepository {
         return dataSource.sendSubstitution(substitution, LoginRepository.getInstance(dataSource).getToken());
     }
 
-    public Result<SubstitutionsReply> getSubstitutionsFromServer(int date) {
+    Result<SubstitutionsReply> getSubstitutionsFromServer(int date) {
         return dataSource.getSubstitutions(LoginRepository.getInstance(dataSource).getToken(), date);
     }
 

@@ -10,9 +10,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import ru.mrlargha.stemobile.data.Result;
 import ru.mrlargha.stemobile.data.STERepository;
+import ru.mrlargha.stemobile.data.model.SimpleServerReply;
 import ru.mrlargha.stemobile.data.model.Substitution;
 
 public class MainViewModel extends AndroidViewModel {
@@ -104,36 +107,13 @@ public class MainViewModel extends AndroidViewModel {
         @Override
         protected final Void doInBackground(Void... voids) {
             try {
+                publishProgress(0);
                 steRepository.downloadUpdate();
+                publishProgress(-1);
             } catch (STERepository.SynchronizationException e) {
                 errorString.postValue(e.getMessage());
             }
             return null;
-//            LinkedList<SimpleServerReply> replies = new LinkedList<>();
-//            for (Substitution substitution : pendingSubstitutions) {
-//                Result result = steRepository.sendSubstitution(substitution);
-//                if (result instanceof Result.Success) {
-//                    SimpleServerReply reply = ((Result.Success<SimpleServerReply>) result).getData();
-//                    replies.add(reply);
-//                    if (reply.getStatus().equals("ok")) {
-//                        steRepository.setSubstitutionStatus(substitution.getID(),
-//                                Substitution.STATUS_SYNCHRONIZED);
-//                    } else {
-//                        steRepository.setSubstitutionStatus(substitution.getID(),
-//                                Substitution.STATUS_ERROR);
-//                    }
-//                } else {
-//                    errorString.postValue("Ошибка синхронизации: " + ((Result.Error) result).getErrorString());
-//                }
-//                progress += 99 / pendingSubstitutions.size();
-//                publishProgress(progress);
-//            }
-//            return replies;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
         }
 
         @Override
@@ -141,6 +121,40 @@ public class MainViewModel extends AndroidViewModel {
             super.onProgressUpdate(values);
             syncProgress.setValue(values[0]);
             Log.d(TAG, "onFetchProgressUpdate: Progress " + values[0]);
+        }
+    }
+
+    private class UploadTask extends AsyncTask<Void, Integer, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            int progress = 0;
+            publishProgress(progress);
+            LinkedList<Substitution> substitutions = steRepository.getUnSyncSubstitutions();
+            for (Substitution substitution : substitutions) {
+                Result<SimpleServerReply> result = steRepository.sendSubstitution(substitution);
+                progress += 100 / substitutions.size();
+                publishProgress(progress);
+                if (!(result instanceof Result.Success)) {
+                    errorString.postValue("Потеряно соедение с сервером. Проверьте подключение!");
+                } else {
+                    Result.Success<SimpleServerReply> success =
+                            (Result.Success<SimpleServerReply>) result;
+                    if (success.getData().getStatus().equals("error")) {
+                        steRepository.setSubstitutionStatus(substitution.getID(),
+                                                            Substitution.STATUS_ERROR);
+                    }
+                }
+            }
+            publishProgress(-1);
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            syncProgress.setValue(values[0]);
+            Log.d(TAG, "onUploadProgressUpdate: Progress " + values[0]);
         }
     }
 }
