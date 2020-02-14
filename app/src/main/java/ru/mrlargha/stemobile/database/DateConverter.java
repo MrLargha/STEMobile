@@ -4,14 +4,15 @@ import androidx.room.TypeConverter;
 
 import java.util.Date;
 
+@SuppressWarnings("WeakerAccess") // Type converters must be public
 public class DateConverter {
     @TypeConverter
-    long fromSubstitutionDate(Date substitutionDate) {
+    public long fromSubstitutionDate(Date substitutionDate) {
         return substitutionDate.getTime();
     }
 
     @TypeConverter
-    Date toSubstitutionDate(long substitutionDate) {
+    public Date toSubstitutionDate(long substitutionDate) {
         return new Date(substitutionDate);
     }
 }
