@@ -64,19 +64,35 @@ public class STERepository {
         return new LinkedList<>(Arrays.asList(steDao.getUnSyncSubstitutions()));
     }
 
-    public void downloadUpdate() throws SynchronizationException {
+    public int downloadUpdate() throws SynchronizationException {
         Calendar reference = Calendar.getInstance();
         reference.set(Calendar.HOUR_OF_DAY, reference.getActualMinimum(Calendar.HOUR_OF_DAY));
         reference.set(Calendar.MINUTE, reference.getActualMinimum(Calendar.MINUTE));
         reference.set(Calendar.SECOND, reference.getActualMinimum(Calendar.SECOND));
         reference.set(Calendar.MILLISECOND, reference.getActualMinimum(Calendar.MILLISECOND));
 
-        Result<SubstitutionsReply> serverSubstitutions
+        Result<SubstitutionsReply> serverSubstitutionsReply
                 = getSubstitutionsFromServer((int) reference.getTime().getTime());
         LinkedList<Substitution> localSubstitutions = getSubstitutionsSync();
-        if (serverSubstitutions instanceof Result.Success) {
-            for (Substitution serverSubstitution : ((SubstitutionsReply) ((Result.Success)
-                    serverSubstitutions).getData()).getSubstitutions()) {
+        int insertedCounter = 0;
+        if (serverSubstitutionsReply instanceof Result.Success) {
+            List<Substitution> serverSubstitutionsList = ((SubstitutionsReply) ((Result.Success)
+                    serverSubstitutionsReply).getData()).getSubstitutions();
+            for (Substitution substitution : localSubstitutions) {
+                if (substitution.getStatus().equals(Substitution.STATUS_SYNCHRONIZED)) {
+                    boolean hasOnServer = false;
+                    for (Substitution serverSubstitution : serverSubstitutionsList) {
+                        if (serverSubstitution.fullEquals(substitution)) {
+                            hasOnServer = true;
+                            break;
+                        }
+                    }
+                    if (!hasOnServer) {
+                        steDao.deleteByUID(substitution.getID());
+                    }
+                }
+            }
+            for (Substitution serverSubstitution : serverSubstitutionsList) {
                 boolean hasOnClient = false;
                 for (Substitution localSubstitution : localSubstitutions) {
                     if (localSubstitution.fullEquals(serverSubstitution)) {
@@ -87,11 +103,13 @@ public class STERepository {
                 if (!hasOnClient) {
                     serverSubstitution.setStatus(Substitution.STATUS_SYNCHRONIZED);
                     insertSubstitutionToDB(serverSubstitution);
+                    insertedCounter++;
                 }
             }
         } else {
-            throw new SynchronizationException(((Result.Error) serverSubstitutions).getErrorString());
+            throw new SynchronizationException(((Result.Error) serverSubstitutionsReply).getErrorString());
         }
+        return insertedCounter;
     }
 
     public Result<SubstitutionFormHints> getFormHints() {

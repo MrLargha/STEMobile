@@ -2,7 +2,6 @@ package ru.mrlargha.stemobile.ui.main;
 
 import android.app.Application;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -26,14 +25,15 @@ public class MainViewModel extends AndroidViewModel {
     private LiveData<List<Substitution>> substitutionsList;
     private MutableLiveData<Integer> syncProgress = new MutableLiveData<>(-1);
     private MutableLiveData<String> undoString = new MutableLiveData<>();
-    private MutableLiveData<String> errorString = new MutableLiveData<>("");
+    private MutableLiveData<String> errorString = new MutableLiveData<>();
+    private MutableLiveData<String> statusString = new MutableLiveData<>();
     private ArrayList<Substitution> savedSubstitutions = new ArrayList<>();
-
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         steRepository = STERepository.getRepository(application.getApplicationContext());
         substitutionsList = steRepository.getSubstitutions();
+        syncSubstitutions(false);
     }
 
     void deleteSubstitutions(ArrayList<Long> ids) {
@@ -56,12 +56,14 @@ public class MainViewModel extends AndroidViewModel {
         if (canUndo) {
             if (serverDel > 0) {
                 undoString.setValue(String.format("Из локального хранилища удалено %s замещений." +
-                                                          "С сервера удалено %s замещений",
-                                                  savedSubstitutions.size(), serverDel));
+                                "С сервера удалено %s замещений",
+                        savedSubstitutions.size(), serverDel));
             } else {
                 undoString.setValue(String.format("Из локального хранилища удалено %s замещений.",
-                                                  savedSubstitutions.size()));
+                        savedSubstitutions.size()));
             }
+        } else {
+            statusString.setValue(String.format("С сервера удалено %s замещений.", serverDel));
         }
     }
 
@@ -85,15 +87,24 @@ public class MainViewModel extends AndroidViewModel {
         return substitutionsList;
     }
 
-    void syncSubstitutions() {
-        new FetchTask().execute();
+    public MutableLiveData<String> getErrorString() {
+        return errorString;
+    }
+
+    void syncSubstitutions(boolean upload) {
+        new FetchTask().execute(upload);
     }
 
     MutableLiveData<Integer> getSyncProgress() {
         return syncProgress;
     }
 
+    public MutableLiveData<String> getStatusString() {
+        return statusString;
+    }
+
     private class DeleteTask extends AsyncTask<Substitution, Void, Void> {
+
 
         @Override
         protected Void doInBackground(Substitution... substitutions) {
@@ -102,35 +113,57 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
-    private class FetchTask extends AsyncTask<Void, Integer, Void> {
+    // The firs parameter used as flag: true - upload local after sync, false - no upload
+    private class FetchTask extends AsyncTask<Boolean, Integer, Boolean> {
+
 
         @Override
-        protected final Void doInBackground(Void... voids) {
+        protected final Boolean doInBackground(Boolean... booleans) {
             try {
                 publishProgress(0);
-                steRepository.downloadUpdate();
-                publishProgress(-1);
+                int downloaded = steRepository.downloadUpdate();
+                if (downloaded > 0) {
+                    statusString.postValue("Загружено " + downloaded + " замещений");
+                }
             } catch (STERepository.SynchronizationException e) {
                 errorString.postValue(e.getMessage());
+                publishProgress(-1);
+                return false;
             }
-            return null;
+            if (!booleans[0]) {
+                publishProgress(-1);
+            }
+            return booleans[0];
         }
 
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
             syncProgress.setValue(values[0]);
-            Log.d(TAG, "onFetchProgressUpdate: Progress " + values[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if (aBoolean) {
+                new UploadTask().execute();
+            }
         }
     }
 
     private class UploadTask extends AsyncTask<Void, Integer, Void> {
+
 
         @Override
         protected Void doInBackground(Void... voids) {
             int progress = 0;
             publishProgress(progress);
             LinkedList<Substitution> substitutions = steRepository.getUnSyncSubstitutions();
+            if (substitutions.isEmpty()) {
+                statusString.postValue("Нечего синхронизировать");
+                publishProgress(-1);
+                return null;
+            }
             for (Substitution substitution : substitutions) {
                 Result<SimpleServerReply> result = steRepository.sendSubstitution(substitution);
                 progress += 100 / substitutions.size();
@@ -142,10 +175,15 @@ public class MainViewModel extends AndroidViewModel {
                             (Result.Success<SimpleServerReply>) result;
                     if (success.getData().getStatus().equals("error")) {
                         steRepository.setSubstitutionStatus(substitution.getID(),
-                                                            Substitution.STATUS_ERROR);
+                                Substitution.STATUS_ERROR);
+                    } else {
+                        steRepository.setSubstitutionStatus(substitution.getID(),
+                                Substitution.STATUS_SYNCHRONIZED);
                     }
                 }
             }
+            statusString.postValue(String.format("Не сервер отправлено %s замещений",
+                    substitutions.size()));
             publishProgress(-1);
             return null;
         }
@@ -154,7 +192,6 @@ public class MainViewModel extends AndroidViewModel {
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
             syncProgress.setValue(values[0]);
-            Log.d(TAG, "onUploadProgressUpdate: Progress " + values[0]);
         }
     }
 }

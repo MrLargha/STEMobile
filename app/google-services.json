@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "430409903216",
+    "firebase_url": "https://ste-mobile.firebaseio.com",
+    "project_id": "ste-mobile",
+    "storage_bucket": "ste-mobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:430409903216:android:82902c24d31ff917b858b5",
+        "android_client_info": {
+          "package_name": "ru.mrlargha.stemobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "430409903216-ra5g7v8nlfvlutmlpuvtb17lsfn54v0t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXmWqfmwpUHdxaw5wuFe4SNfm24tdJtos"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "430409903216-ra5g7v8nlfvlutmlpuvtb17lsfn54v0t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

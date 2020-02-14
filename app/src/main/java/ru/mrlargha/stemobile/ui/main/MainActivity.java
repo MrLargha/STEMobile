@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -107,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
         mViewModel.getUndoString().observe(this, s -> {
             if (!s.isEmpty()) {
                 Snackbar.make(mBinding.getRoot(),
-                              s, Snackbar.LENGTH_LONG).setAction("Отменить",
-                                                                 v -> mViewModel.undoLocalDeletion())
+                        s, Snackbar.LENGTH_LONG).setAction("Отменить",
+                        v -> mViewModel.undoLocalDeletion())
                         .addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
                             @Override
                             public void onDismissed(Snackbar transientBottomBar, int event) {
@@ -121,15 +122,28 @@ public class MainActivity extends AppCompatActivity {
         mViewModel.getSyncProgress().observe(this, progress -> {
             if (progress == -1) {
                 mBinding.content.progressBar.setVisibility(View.GONE);
+                mBinding.content.swipeToRefresh.setRefreshing(false);
             } else if (progress == 0) {
-                mBinding.content.progressBar.setIndeterminate(true);
-                mBinding.content.progressBar.setVisibility(View.VISIBLE);
+                mBinding.content.swipeToRefresh.setRefreshing(true);
             } else {
                 mBinding.content.progressBar.setIndeterminate(false);
                 mBinding.content.progressBar.setVisibility(View.VISIBLE);
                 mBinding.content.progressBar.setProgress(progress);
             }
         });
+
+        mViewModel.getStatusString().observe(this, status -> {
+            Snackbar snack = Snackbar.make(mBinding.getRoot(), status, Snackbar.LENGTH_SHORT);
+            snack.setAnimationMode(Snackbar.ANIMATION_MODE_FADE);
+            snack.setAnchorView(mBinding.fab);
+            snack.show();
+        });
+
+        mViewModel.getErrorString().observe(this, error ->
+                Toast.makeText(this, error, Toast.LENGTH_LONG).show());
+
+        mBinding.content.swipeToRefresh.setOnRefreshListener(() ->
+                mViewModel.syncSubstitutions(false));
     }
 
     public void deleteSubstitutions(ArrayList<Long> ids) {
@@ -154,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.sync) {
-            mViewModel.syncSubstitutions();
+            mViewModel.syncSubstitutions(true);
         } else if (id == R.id.logout) {
             setResult(CODE_LOGOUT);
             finish();

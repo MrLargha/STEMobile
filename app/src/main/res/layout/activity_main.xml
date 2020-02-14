@@ -28,10 +28,16 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
+        style="@style/Widget.Design.FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+        android:background="@color/colorAccent"
         android:backgroundTint="@color/colorAccent"
-        android:src="@drawable/ic_plus" />
+        android:focusableInTouchMode="true"
+        android:labelFor="@id/content"
+        android:src="@drawable/ic_plus"
+        app:backgroundTintMode="add"
+        app:fabSize="auto" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
