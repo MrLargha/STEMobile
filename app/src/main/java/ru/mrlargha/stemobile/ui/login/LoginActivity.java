@@ -18,6 +18,11 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.vk.api.sdk.VK;
+import com.vk.api.sdk.auth.VKAccessToken;
+import com.vk.api.sdk.auth.VKAuthCallback;
+
+import org.jetbrains.annotations.NotNull;
 
 import ru.mrlargha.stemobile.R;
 import ru.mrlargha.stemobile.data.model.LoginServerReply;
@@ -50,6 +55,10 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login);
         registerButton = findViewById(R.id.register);
         loadingProgressBar = findViewById(R.id.loading);
+
+        usernameLayout.setStartIconOnClickListener(v -> {
+            VK.login(this);
+        });
 
         loginViewModel.getLoginFormState().observe(this, loginFormState -> {
             if (loginFormState == null) {
@@ -94,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 loginViewModel.loginDataChanged(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+                                                passwordEditText.getText().toString());
             }
         };
         usernameEditText.addTextChangedListener(afterTextChangedListener);
@@ -103,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+                                     passwordEditText.getText().toString());
             }
             return false;
         });
@@ -111,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> {
             loadingProgressBar.setVisibility(View.VISIBLE);
             loginViewModel.login(usernameEditText.getText().toString(),
-                    passwordEditText.getText().toString());
+                                 passwordEditText.getText().toString());
             SharedPreferences sp = getSharedPreferences("keystore", MODE_PRIVATE);
             sp.edit().putString("vk_id", usernameEditText.getText().toString()).apply();
         });
@@ -119,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
         registerButton.setOnClickListener(v -> {
             loadingProgressBar.setVisibility(View.VISIBLE);
             loginViewModel.register(usernameEditText.getText().toString(),
-                    passwordEditText.getText().toString());
+                                    passwordEditText.getText().toString());
             SharedPreferences sp = getSharedPreferences("keystore", MODE_PRIVATE);
             sp.edit().putString("vk_id", usernameEditText.getText().toString()).apply();
         });
@@ -144,6 +153,7 @@ public class LoginActivity extends AppCompatActivity {
             usernameEditText.setText(vk_id);
         }
 
+
     }
 
     private void updateUiWithUser(LoginServerReply model) {
@@ -152,7 +162,7 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sp = getSharedPreferences("keystore", MODE_PRIVATE);
         sp.edit().putString("ste_token", model.getSte_token()).apply();
         startActivityForResult(new Intent(this, MainActivity.class),
-                MainActivity.REQUEST_CODE);
+                               MainActivity.REQUEST_CODE);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
@@ -172,6 +182,19 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 finish();
             }
+        } else {
+            VK.onActivityResult(requestCode, resultCode, data, new VKAuthCallback() {
+                @Override
+                public void onLoginFailed(int i) {
+                    Toast.makeText(LoginActivity.this, "Ошибка авторизации VK",
+                                   Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onLogin(@NotNull VKAccessToken vkAccessToken) {
+                    usernameEditText.setText(Integer.toString(vkAccessToken.getUserId()));
+                }
+            });
         }
     }
 }
