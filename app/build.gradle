@@ -17,7 +17,7 @@ android {
     }
 
     def runTasks = gradle.startParameter.taskNames
-    if ('assembleRelease' in runTasks) {
+    if (':app:assembleRelease' in runTasks) {
         value = 1
     }
 
@@ -33,15 +33,13 @@ android {
 
         versionProps.store(versionPropsFile.newWriter(), null)
 
-        // 1: change major and minor version here
         mVersionName = "v0.1.${versionProps['VERSION_PATCH']}"
-        // 2: change AppName for your app name
-        mFileName = "AppName-${mVersionName}.apk"
+        mFileName = "STE-Mobile-${mVersionName}.apk"
 
         defaultConfig {
             minSdkVersion 19
             targetSdkVersion 29
-            applicationId "ru.mrlargha.stemobile" // 3: change to your package name
+            applicationId "ru.mrlargha.stemobile"
             versionCode versionProps['VERSION_NUMBER'].toInteger()
             versionName "${mVersionName} Build: ${versionProps['VERSION_BUILD']}"
         }
@@ -50,7 +48,7 @@ android {
         throw new FileNotFoundException("Could not read version.properties!")
     }
 
-    if ('assembleRelease' in runTasks) {
+    if (':app:assembleRelease' in runTasks) {
         applicationVariants.all { variant ->
             variant.outputs.all { output ->
                 if (output.outputFile != null && output.outputFile.name.endsWith('.apk')) {
