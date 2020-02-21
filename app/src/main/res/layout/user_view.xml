@@ -59,7 +59,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:selectAllOnFocus="false"
-                android:text="Пользователь" />
+                android:text="Пользователь"
+                android:textSize="12sp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/moderToggle"
@@ -67,7 +68,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Модератор" />
+                android:text="Модератор"
+                android:textSize="12sp" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
 

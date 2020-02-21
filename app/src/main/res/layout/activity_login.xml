@@ -78,6 +78,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
+        android:orientation="horizontal"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/password"
         app:layout_constraintHorizontal_bias="0.498"
@@ -158,7 +159,8 @@
         android:layout_marginBottom="8dp"
         android:text="v0.0.1 (123)"
         android:textAlignment="center"
+        android:textColor="@color/colorAccent"
         app:layout_constraintBottom_toTopOf="@+id/author"
-        app:layout_constraintEnd_toEndOf="@+id/author"
-        app:layout_constraintStart_toStartOf="@+id/author" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

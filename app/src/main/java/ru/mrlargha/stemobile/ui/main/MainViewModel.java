@@ -55,7 +55,8 @@ public class MainViewModel extends AndroidViewModel {
         }
         if (canUndo) {
             if (serverDel > 0) {
-                undoString.setValue(String.format("Из локального хранилища удалено %s замещений." +
+                // No sense to undo it
+                statusString.setValue(String.format("Из локального хранилища удалено %s замещений." +
                                 "С сервера удалено %s замещений",
                         savedSubstitutions.size(), serverDel));
             } else {
@@ -104,8 +105,6 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     private class DeleteTask extends AsyncTask<Substitution, Void, Void> {
-
-
         @Override
         protected Void doInBackground(Substitution... substitutions) {
             steRepository.deleteSubstitution(substitutions[0]);
@@ -160,7 +159,6 @@ public class MainViewModel extends AndroidViewModel {
             publishProgress(progress);
             LinkedList<Substitution> substitutions = steRepository.getUnSyncSubstitutions();
             if (substitutions.isEmpty()) {
-                statusString.postValue("Нечего синхронизировать");
                 publishProgress(-1);
                 return null;
             }
@@ -169,7 +167,7 @@ public class MainViewModel extends AndroidViewModel {
                 progress += 100 / substitutions.size();
                 publishProgress(progress);
                 if (!(result instanceof Result.Success)) {
-                    errorString.postValue("Потеряно соедение с сервером. Проверьте подключение!");
+                    errorString.postValue(((Result.Error) result).getErrorString());
                 } else {
                     Result.Success<SimpleServerReply> success =
                             (Result.Success<SimpleServerReply>) result;
@@ -182,8 +180,6 @@ public class MainViewModel extends AndroidViewModel {
                     }
                 }
             }
-            statusString.postValue(String.format("Не сервер отправлено %s замещений",
-                    substitutions.size()));
             publishProgress(-1);
             return null;
         }
