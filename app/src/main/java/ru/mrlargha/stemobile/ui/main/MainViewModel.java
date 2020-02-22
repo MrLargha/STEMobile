@@ -88,7 +88,7 @@ public class MainViewModel extends AndroidViewModel {
         return substitutionsList;
     }
 
-    public MutableLiveData<String> getErrorString() {
+    MutableLiveData<String> getErrorString() {
         return errorString;
     }
 
@@ -100,7 +100,7 @@ public class MainViewModel extends AndroidViewModel {
         return syncProgress;
     }
 
-    public MutableLiveData<String> getStatusString() {
+    MutableLiveData<String> getStatusString() {
         return statusString;
     }
 

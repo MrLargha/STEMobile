@@ -29,12 +29,29 @@ public class LoginViewModel extends ViewModel {
         return loginResult;
     }
 
+    private boolean checkForm(String username, String password) {
+        if (!isUserNameValid(username)) {
+            loginFormState.setValue(new LoginFormState(R.string.invalid_username, null));
+            return false;
+        } else if (!isPasswordValid(password)) {
+            loginFormState.setValue(new LoginFormState(null, R.string.invalid_password));
+            return false;
+        } else {
+            loginFormState.setValue(new LoginFormState(true));
+            return true;
+        }
+    }
+
     public void login(String username, String password) {
-        new LoginTask().execute(username, hash(password));
+        if (checkForm(username, password)) {
+            new LoginTask().execute(username, hash(password));
+        }
     }
 
     void register(String username, String password) {
-        new RegisterTask().execute(username, hash(password));
+        if (checkForm(username, password)) {
+            new RegisterTask().execute(username, hash(password));
+        }
     }
 
     void getInfo(String token) {
@@ -42,13 +59,7 @@ public class LoginViewModel extends ViewModel {
     }
 
     void loginDataChanged(String username, String password) {
-        if (!isUserNameValid(username)) {
-            loginFormState.setValue(new LoginFormState(R.string.invalid_username, null));
-        } else if (!isPasswordValid(password)) {
-            loginFormState.setValue(new LoginFormState(null, R.string.invalid_password));
-        } else {
-            loginFormState.setValue(new LoginFormState(true));
-        }
+
     }
 
     private boolean isUserNameValid(String username) {
@@ -68,7 +79,7 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
-    public void logout() {
+    void logout() {
         new LogoutTask().execute();
     }
 

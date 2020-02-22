@@ -20,6 +20,7 @@ public class UsersViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<User>> usersLiveData = new MutableLiveData<>(new LinkedList<>());
     private MutableLiveData<Boolean> hasNetworkOperationInProgress = new MutableLiveData<>(false);
+    private MutableLiveData<String> errorString = new MutableLiveData<>("");
     private STERepository mSTERepository;
 
     public UsersViewModel(@NonNull Application application) {
@@ -34,12 +35,16 @@ public class UsersViewModel extends AndroidViewModel {
         new SetUserPermissionTask().execute(String.valueOf(user.getVk_id()), user.getPermissions());
     }
 
-    public MutableLiveData<Boolean> getHasNetworkOperationInProgress() {
+    MutableLiveData<Boolean> getHasNetworkOperationInProgress() {
         return hasNetworkOperationInProgress;
     }
 
-    public MutableLiveData<List<User>> getUsersLiveData() {
+    MutableLiveData<List<User>> getUsersLiveData() {
         return usersLiveData;
+    }
+
+    MutableLiveData<String> getErrorString() {
+        return errorString;
     }
 
     private class GetUsersTask extends AsyncTask<Void, Void, List<User>> {
@@ -50,6 +55,7 @@ public class UsersViewModel extends AndroidViewModel {
             if (result instanceof Result.Success) {
                 return ((Result.Success<UsersReply>) result).getData().getUsers();
             } else {
+                errorString.postValue(((Result.Error) result).getErrorString());
                 return new LinkedList<>();
             }
         }
@@ -57,7 +63,9 @@ public class UsersViewModel extends AndroidViewModel {
         @Override
         protected void onPostExecute(List<User> users) {
             super.onPostExecute(users);
-            usersLiveData.setValue(users);
+            if (!users.isEmpty()) {
+                usersLiveData.setValue(users);
+            }
             hasNetworkOperationInProgress.setValue(false);
         }
     }
@@ -70,14 +78,19 @@ public class UsersViewModel extends AndroidViewModel {
             if (result instanceof Result.Success) {
                 return ((Result.Success<SimpleServerReply>) result).getData().getStatus();
             } else {
-                return "Сетевая ошибка";
+                return ((Result.Error) result).getErrorString();
             }
         }
 
         @Override
-        protected void onPostExecute(String aBoolean) {
-            super.onPostExecute(aBoolean);
-            hasNetworkOperationInProgress.setValue(false);
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (result.equals("ok")) {
+                hasNetworkOperationInProgress.setValue(false);
+            } else {
+                errorString.postValue(result);
+                new GetUsersTask().execute();
+            }
         }
     }
 }

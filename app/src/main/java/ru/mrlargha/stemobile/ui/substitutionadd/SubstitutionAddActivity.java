@@ -13,11 +13,13 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import ru.mrlargha.stemobile.R;
 import ru.mrlargha.stemobile.databinding.ActivitySubstitutionAddBinding;
@@ -71,7 +73,7 @@ public class SubstitutionAddActivity extends AppCompatActivity {
                 Snackbar.make(mBinding.coordinator, "Замещение добавлено в локальное хранилище",
                               Snackbar.LENGTH_SHORT).show();
                 if (finishRequired) {
-                    finish();
+                    super.finish();
                 } else {
                     mBinding.cabEditEdit.setText("");
                     mBinding.substitutingSubjectEdit.setText("");
@@ -155,6 +157,26 @@ public class SubstitutionAddActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public void finish() {
+        if (!Objects.requireNonNull(mBinding.substitutingTeacher
+                                            .getEditText()).getText().toString().isEmpty() ||
+                !Objects.requireNonNull(mBinding.substitutingSubject
+                                                .getEditText()).getText().toString().isEmpty()) {
+            new MaterialAlertDialogBuilder(this,
+                                           R.style.ThemeOverlay_MaterialComponents_Dialog_Alert)
+                    .setTitle("Подтвердите действие")
+                    .setMessage("Текущее замещение не будет сохранено. Выйти?")
+                    .setPositiveButton("Отменить", (dialog, which) -> dialog.cancel())
+                    .setNegativeButton("Выйти", (dialog, which) -> {
+                        dialog.cancel();
+                        super.finish();
+                    }).show();
+        } else {
+            super.finish();
+        }
     }
 
     @Override

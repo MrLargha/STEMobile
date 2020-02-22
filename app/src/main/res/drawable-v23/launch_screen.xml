@@ -6,7 +6,6 @@
         android:width="300dp"
         android:height="300dp"
         android:gravity="center">
-
         <bitmap
             android:gravity="fill"
             android:src="@drawable/fspo_logo" />

@@ -67,7 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext"
-                    android:inputType="date" />
+                    android:inputType="date|number" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -162,7 +162,8 @@
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:hint="Кабинет"
-                    app:counterEnabled="false">
+                    app:counterEnabled="false"
+                    app:endIconMode="clear_text">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/cab_edit_edit"
@@ -253,7 +254,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="завершить"
+                android:text="сохранить и выйти"
+                android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/switchMaterial" />
 
@@ -265,6 +267,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="добавить ещё"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/switchMaterial" />
 
