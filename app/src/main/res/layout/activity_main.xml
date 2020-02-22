@@ -34,10 +34,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:background="@color/colorAccent"
-        android:backgroundTint="@color/colorAccent"
-        android:focusableInTouchMode="true"
-        android:labelFor="@id/content"
         android:src="@drawable/ic_plus"
-        app:backgroundTintMode="add"
-        app:fabSize="auto" />
+        app:backgroundTintMode="add" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
