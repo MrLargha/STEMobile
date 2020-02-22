@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -76,8 +74,9 @@ public class LoginActivity extends AppCompatActivity {
             if (loginFormState == null) {
                 return;
             }
-            loginButton.setEnabled(loginFormState.isDataValid());
-            registerButton.setEnabled(loginFormState.isDataValid());
+            if (!loginFormState.isDataValid()) {
+                loadingProgressBar.setVisibility(View.GONE);
+            }
             if (loginFormState.getUsernameError() != null) {
                 usernameLayout.setError(getString(loginFormState.getUsernameError()));
             }
@@ -100,26 +99,6 @@ public class LoginActivity extends AppCompatActivity {
                 updateUiWithUser(loginResult.getSuccess());
             }
         });
-
-        TextWatcher afterTextChangedListener = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // ignore
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // ignore
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                loginViewModel.loginDataChanged(usernameEditText.getText().toString(),
-                                                passwordEditText.getText().toString());
-            }
-        };
-        usernameEditText.addTextChangedListener(afterTextChangedListener);
-        passwordEditText.addTextChangedListener(afterTextChangedListener);
 
         passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
