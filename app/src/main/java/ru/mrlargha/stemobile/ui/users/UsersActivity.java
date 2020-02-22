@@ -3,6 +3,7 @@ package ru.mrlargha.stemobile.ui.users;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,15 +39,21 @@ public class UsersActivity extends AppCompatActivity {
         mBinding.usersRecycler.setAdapter(adapter);
         mBinding.usersRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-        mViewModel.getHasNetworkOperationInProgress().observe(this, inProgress -> {
-            mBinding.progressBar.setVisibility(inProgress ? View.VISIBLE : View.GONE);
-        });
+        mViewModel.getHasNetworkOperationInProgress()
+                .observe(this, inProgress ->
+                        mBinding.progressBar.setVisibility(inProgress ? View.VISIBLE : View.GONE));
 
         mViewModel.getUsersLiveData().observe(this, adapter::setData);
+        mViewModel.getErrorString().observe(this, error -> {
+            if (!error.isEmpty()) {
+                Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHolder> {
 
+        private boolean bindMutex = false;
         private ArrayList<User> users = new ArrayList<>();
 
         @NonNull
@@ -81,6 +88,7 @@ public class UsersActivity extends AppCompatActivity {
             }
 
             void bind(User user) {
+                bindMutex = false;
                 mUserViewBinding.userName.setText(user.getName());
                 if (user.getGroup() == -1) {
                     mUserViewBinding.groupText.setText("нет");
@@ -99,9 +107,9 @@ public class UsersActivity extends AppCompatActivity {
                         mUserViewBinding.pairToggleGroup.check(R.id.moderToggle);
                     }
                 }
-
+                bindMutex = true;
                 mUserViewBinding.pairToggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-                    if (isChecked) {
+                    if (isChecked && bindMutex) {
                         if (checkedId == R.id.userToggle) {
                             user.setPermissions("regular");
                         } else {
