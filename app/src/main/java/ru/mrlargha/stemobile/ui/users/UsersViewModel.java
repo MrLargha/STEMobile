@@ -77,7 +77,7 @@ public class UsersViewModel extends AndroidViewModel {
         @Override
         protected void onPostExecute(String aBoolean) {
             super.onPostExecute(aBoolean);
-            hasNetworkOperationInProgress.setValue(false);
+            new GetUsersTask().execute();
         }
     }
 }

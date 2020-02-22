@@ -82,7 +82,11 @@ public class UsersActivity extends AppCompatActivity {
 
             void bind(User user) {
                 mUserViewBinding.userName.setText(user.getName());
-                mUserViewBinding.groupText.setText("C" + user.getGroup());
+                if (user.getGroup() == -1) {
+                    mUserViewBinding.groupText.setText("нет");
+                } else {
+                    mUserViewBinding.groupText.setText("C" + user.getGroup());
+                }
                 if (user.getPermissions().equals("admin")) {
                     mUserViewBinding.userToggle.setEnabled(false);
                     mUserViewBinding.moderToggle.setEnabled(false);
