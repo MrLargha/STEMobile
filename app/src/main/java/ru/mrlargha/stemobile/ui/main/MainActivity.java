@@ -122,9 +122,9 @@ public class MainActivity extends AppCompatActivity {
         mViewModel.getSyncProgress().observe(this, progress -> {
             if (progress == -1) {
                 mBinding.content.progressBar.setVisibility(View.GONE);
-                mBinding.content.swipeToRefresh.setRefreshing(false);
             } else if (progress == 0) {
-                mBinding.content.swipeToRefresh.setRefreshing(true);
+                mBinding.content.progressBar.setIndeterminate(true);
+                mBinding.content.progressBar.setVisibility(View.VISIBLE);
             } else {
                 mBinding.content.progressBar.setIndeterminate(false);
                 mBinding.content.progressBar.setVisibility(View.VISIBLE);
@@ -141,9 +141,6 @@ public class MainActivity extends AppCompatActivity {
 
         mViewModel.getErrorString().observe(this, error ->
                 Toast.makeText(this, error, Toast.LENGTH_LONG).show());
-
-        mBinding.content.swipeToRefresh.setOnRefreshListener(() ->
-                mViewModel.syncSubstitutions(false));
     }
 
     public void deleteSubstitutions(ArrayList<Long> ids) {
