@@ -27,7 +27,11 @@ public class STEDataSource {
                 -> new Date(json.getAsJsonPrimitive().getAsLong()));
 
         Gson gson = builder.create();
-        Retrofit mRetrofit = new Retrofit.Builder().baseUrl("http://fspovkbot.tmweb.ru/ste/")
+        // Use for debug server
+//        Retrofit mRetrofit = new Retrofit.Builder().baseUrl("http://fspovkbot.tmweb.ru/ste/")
+
+        // Use for production server
+        Retrofit mRetrofit = new Retrofit.Builder().baseUrl("https://fspovkbot.tmweb.ru/ste/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         mSTEApi = mRetrofit.create(STEApi.class);

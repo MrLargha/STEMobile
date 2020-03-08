@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         try {
             PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
             String version = pInfo.versionName;
-            ((TextView) findViewById(R.id.version)).setText(version + " EARLY ACCESS ALPHA");
+            ((TextView) findViewById(R.id.version)).setText(version + " BETA RELEASE");
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
