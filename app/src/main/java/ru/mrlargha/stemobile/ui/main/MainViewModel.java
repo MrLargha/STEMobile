@@ -112,10 +112,13 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
+    void forceSync(){
+        steRepository.deleteAllLocalSubstitutions();
+        new FetchTask().execute(false);
+    }
+
     // The firs parameter used as flag: true - upload local after sync, false - no upload
     private class FetchTask extends AsyncTask<Boolean, Integer, Boolean> {
-
-
         @Override
         protected final Boolean doInBackground(Boolean... booleans) {
             try {

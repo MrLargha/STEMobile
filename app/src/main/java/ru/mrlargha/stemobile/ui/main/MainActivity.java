@@ -162,9 +162,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.sync) {
+        if (id == R.id.sync) {
             mViewModel.syncSubstitutions(true);
         } else if (id == R.id.logout) {
             setResult(CODE_LOGOUT);
@@ -172,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.users) {
             startActivity(new Intent(this, UsersActivity.class));
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        } else if (id == R.id.force_sync){
+            mViewModel.forceSync();
         }
         return super.onOptionsItemSelected(item);
     }

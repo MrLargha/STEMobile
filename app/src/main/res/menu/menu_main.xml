@@ -11,19 +11,18 @@
     <item
         android:id="@+id/logout"
         android:icon="@drawable/ic_exit_to_app_black_24dp"
+        android:orderInCategory="4"
         android:title="Выйти"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_settings"
-        android:icon="@drawable/ic_settings_black_24dp"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        android:visible="true"
-        app:showAsAction="never|collapseActionView" />
     <item
         android:id="@+id/sync"
         android:icon="@drawable/ic_cloud_upload_black_24dp"
         android:orderInCategory="0"
         android:title="Синхронизация"
         app:showAsAction="ifRoom|collapseActionView" />
+    <item
+        android:id="@+id/force_sync"
+        android:icon="@drawable/ic_force_delete"
+        android:orderInCategory="3"
+        android:title="Принудительная синхронизация" />
 </menu>
