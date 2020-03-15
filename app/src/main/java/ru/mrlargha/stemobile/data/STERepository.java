@@ -59,12 +59,7 @@ public class STERepository {
     }
 
     public void deleteAllLocalSubstitutions(){
-        STERoomDatabase.getDatabaseExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                steDao.deleteAll();
-            }
-        });
+        STERoomDatabase.getDatabaseExecutor().execute(() -> steDao.deleteAll());
     }
 
     public LinkedList<Substitution> getUnSyncSubstitutions() {

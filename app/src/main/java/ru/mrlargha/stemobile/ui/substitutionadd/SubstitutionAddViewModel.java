@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import ru.mrlargha.stemobile.data.LoginRepository;
 import ru.mrlargha.stemobile.data.Result;
@@ -42,7 +43,7 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
         steRepository = STERepository.getRepository(application.getApplicationContext());
         localSubstitutionsLiveData = steRepository.getSubstitutions();
 
-        new HitsFetchTask().execute();
+        new HintsFetchTask().execute();
     }
 
     private boolean isDateValid(String date) {
@@ -73,18 +74,30 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
         return false;
     }
 
+    private ArrayList<String> parseGroups(String rawString){
+        String[] groups = rawString.split(",");
+        ArrayList<String> result = new ArrayList<>();
+        for(String group : groups){
+            if(isGroupValid(group)){
+                result.add(group);
+            }
+        }
+        return result;
+    }
+
     private boolean isCabinetValid(String cabinet) {
         return !(cabinet == null || cabinet.isEmpty());
     }
 
     void submitSubstitution(String date, String pair,
-                            String group, String cabinet,
+                            String rawGroups, String cabinet,
                             String teacher, String subject) {
         SubstitutionAddFormStateBuilder builder = new SubstitutionAddFormStateBuilder();
+        ArrayList<String> groups = parseGroups(rawGroups);
         if (!isDateValid(date)) {
             builder.setDateError("Неверная дата");
         }
-        if (!isGroupValid(group)) {
+        if (groups.isEmpty() ) {
             builder.setGroupError("Группа не найдена");
         }
         if (!isCabinetValid(cabinet)) {
@@ -100,26 +113,30 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
             builder.setCustomError("Выберите номер пары");
         }
         if (!builder.hasErrors()) {
-            try {
-                Substitution substitution =
-                        new Substitution(teacher, subject, Integer.parseInt(group),
-                                         Integer.parseInt(pair), DateFormatter.stringToDate(date),
-                                         cabinet, Substitution.STATUS_NOT_SYNCHRONIZED,
-                                         LoginRepository.getInstance(new STEDataSource()).getName());
-                boolean isOk = true;
-                for (Substitution localSubstitution : localSubstitutions) {
-                    if (localSubstitution.equals(substitution)) {
-                        isOk = false;
-                        break;
+            for(String group : groups) {
+                try {
+                    Substitution substitution =
+                            new Substitution(teacher, subject, Integer.parseInt(group),
+                                    Integer.parseInt(pair), DateFormatter.stringToDate(date),
+                                    cabinet, Substitution.STATUS_NOT_SYNCHRONIZED,
+                                    Objects.requireNonNull(LoginRepository
+                                            .getInstance(new STEDataSource()).getName()));
+                    boolean isOk = true;
+                    for (Substitution localSubstitution : localSubstitutions) {
+                        if (localSubstitution.equals(substitution)) {
+                            isOk = false;
+                            break;
+                        }
                     }
+                    if (isOk) {
+                        steRepository.insertSubstitutionToDB(substitution);
+                    } else {
+                        builder.setCustomError("Такое замещение уже добавлено");
+                    }
+                } catch (ParseException e) {
+                    builder.setDateError("Неверный формат даты.");
+                    break;
                 }
-                if (isOk) {
-                    steRepository.insertSubstitutionToDB(substitution);
-                } else {
-                    builder.setCustomError("Такое замещение уже добавлено");
-                }
-            } catch (ParseException e) {
-                builder.setDateError("Неверный формат даты.");
             }
         }
         formState.setValue(builder.createSubstitutionAddFormState());
@@ -149,7 +166,7 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
         this.localSubstitutions = localSubstitutions;
     }
 
-    private class HitsFetchTask extends AsyncTask<Void, Void, SubstitutionFormHints> {
+    private class HintsFetchTask extends AsyncTask<Void, Void, SubstitutionFormHints> {
 
         @Override
         protected SubstitutionFormHints doInBackground(Void... voids) {
@@ -167,7 +184,7 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
             if (substitutionFormHints != null) {
                 subjectsList.postValue(new ArrayList<>(substitutionFormHints.getSubjects()));
                 groupsList = new ArrayList<>(substitutionFormHints.getGroups());
-                teachersList.postValue(new ArrayList<>(substitutionFormHints.getTeachers()));
+                teachersList.postValue(new ArrayLiAst<>(substitutionFormHints.getTeachers()));
             }
         }
     }
