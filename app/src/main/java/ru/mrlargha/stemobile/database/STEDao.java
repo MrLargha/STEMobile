@@ -18,19 +18,19 @@ public interface STEDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertSubstitution(Substitution substitution);
 
-    @Query("SELECT * FROM substitutions_table ORDER BY substitutionDate, `group`, pair")
+    @Query("SELECT * FROM substitutions_table ORDER BY substitutionDate, `group` DESC, pair")
     LiveData<List<Substitution>> getAllSubstitutions();
 
-    @Query("SELECT * FROM substitutions_table ORDER BY substitutionDate, `group`, pair")
+    @Query("SELECT * FROM substitutions_table ORDER BY substitutionDate, `group` DESC, pair")
     Substitution[] getAllSubstitutionsSync();
 
     @Query("DELETE FROM substitutions_table")
     void deleteAll();
 
-    @TypeConverters({DateConverter.class})
-    @Query("SELECT * FROM substitutions_table WHERE `group`= :group AND pair = :pair" +
-            " AND substitutionDate=:date")
-    LiveData<List<Substitution>> getSubstitutions(int group, int pair, Date date);
+//    @TypeConverters({DateConverter.class})
+//    @Query("SELECT * FROM substitutions_table WHERE `group`= :group AND pair = :pair" +
+//            " AND substitutionDate=:date")
+//    LiveData<List<Substitution>> getSubstitutions(int group, int pair, Date date);
 
     @Query("DELETE FROM substitutions_table WHERE uid = :uid")
     void deleteByUID(long uid);

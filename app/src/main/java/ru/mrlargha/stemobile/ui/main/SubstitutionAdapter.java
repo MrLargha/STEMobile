@@ -10,20 +10,25 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import ru.mrlargha.stemobile.data.model.Substitution;
 import ru.mrlargha.stemobile.databinding.SubstitutionDateDividerBinding;
+import ru.mrlargha.stemobile.databinding.SubstitutionGroupDividerBinding;
 import ru.mrlargha.stemobile.databinding.SubstitutionRecViewBinding;
 import ru.mrlargha.stemobile.tools.DateFormatter;
 import ru.mrlargha.stemobile.tools.SubstitutionsSort;
 
+
 class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TYPE_SUBSTITUTION = 1;
-    private static final int TYPE_DIVIDER = 2;
+    private static final int TYPE_DATE_DIVIDER = 2;
+    private static final int TYPE_GROUP_DIVIDER = 3;
 
     private SelectionTracker<Long> selectionTracker;
 
@@ -41,17 +46,23 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.selectionTracker = selectionTracker;
     }
 
-    @NonNull
+    @NotNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == TYPE_SUBSTITUTION) {
-            View v = SubstitutionRecViewBinding
-                    .inflate(LayoutInflater.from(parent.getContext()), parent, false).getRoot();
-            return new SubstitutionViewHolder(v);
-        } else {
-            View v = SubstitutionDateDividerBinding.inflate(LayoutInflater.from(parent.getContext()),
-                    parent, false).getRoot();
-            return new DividerViewHolder(v);
+        switch (viewType) {
+            case TYPE_SUBSTITUTION:
+                View v = SubstitutionRecViewBinding
+                        .inflate(LayoutInflater.from(parent.getContext()), parent, false).getRoot();
+                return new SubstitutionViewHolder(v);
+            case TYPE_DATE_DIVIDER:
+                View v1 = SubstitutionDateDividerBinding.inflate(LayoutInflater.from(parent.getContext()),
+                        parent, false).getRoot();
+                return new DateDividerViewHolder(v1);
+            case TYPE_GROUP_DIVIDER:
+            default:
+                View v2 = SubstitutionGroupDividerBinding.inflate(LayoutInflater.from(parent.getContext()),
+                        parent, false).getRoot();
+                return new GroupDividerViewHolder(v2);
         }
     }
 
@@ -67,14 +78,9 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             ((SubstitutionAdapter.SubstitutionViewHolder) holder)
                     .bind(substitution, selectionTracker.isSelected((long) substitution.getID()));
         } else {
-            DividerViewHolder dividerViewHolder = (DividerViewHolder) holder;
-            Calendar c = Calendar.getInstance();
-            c.setTime((Date) elements.get(position));
-            if (c.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR)) {
-                dividerViewHolder.binding.date.setText("Сегодня");
-            } else {
-                dividerViewHolder.binding.date.setText(DateFormatter.dateToString((Date) elements.get(position)));
-            }
+            DividerViewHolder groupDividerViewHolder = (DividerViewHolder) holder;
+            groupDividerViewHolder.bind(((SubstitutionDivider)
+                    elements.get(position)).getDividerText());
         }
     }
 
@@ -89,7 +95,12 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        return elements.get(position) instanceof Substitution ? TYPE_SUBSTITUTION : TYPE_DIVIDER;
+        if (elements.get(position) instanceof Substitution) {
+            return TYPE_SUBSTITUTION;
+        } else {
+            SubstitutionDivider divider = (SubstitutionDivider) elements.get(position);
+            return divider.getDividerType();
+        }
     }
 
     int getPositionByKey(long key) {
@@ -108,6 +119,45 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         new SortTask().execute(elements);
     }
 
+    static abstract class DividerViewHolder extends RecyclerView.ViewHolder {
+
+        DividerViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+
+        abstract void bind(String dividerText);
+    }
+
+    static class GroupDividerViewHolder extends DividerViewHolder {
+
+        SubstitutionGroupDividerBinding binding;
+
+        GroupDividerViewHolder(@NonNull View itemView) {
+            super(itemView);
+            binding = SubstitutionGroupDividerBinding.bind(itemView);
+        }
+
+        @Override
+        void bind(String dividerText) {
+            binding.dividerText.setText(dividerText);
+        }
+    }
+
+    static class DateDividerViewHolder extends DividerViewHolder {
+
+        SubstitutionDateDividerBinding binding;
+
+        DateDividerViewHolder(@NonNull View itemView) {
+            super(itemView);
+            binding = SubstitutionDateDividerBinding.bind(itemView);
+        }
+
+        @Override
+        void bind(String dividerText) {
+            binding.date.setText(dividerText);
+        }
+    }
+
     private class SortTask extends AsyncTask<ArrayList<Substitution>, ArrayList<Object>, ArrayList<Object>> {
 
         @Override
@@ -118,11 +168,23 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 elements = SubstitutionsSort.moveOldDatesToEnd(elements, new Date());
 
                 Date date = elements.get(0).getSubstitutionDate();
-                resultSet.add(elements.get(0).getSubstitutionDate());
+                int group = elements.get(0).getGroup();
+                Calendar c = Calendar.getInstance();
+                c.setTime(date);
+                if (c.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR)) {
+                    resultSet.add(new SubstitutionDivider("Сегодня", TYPE_DATE_DIVIDER));
+                } else {
+                    resultSet.add(new SubstitutionDivider(DateFormatter.dateToString(date), TYPE_DATE_DIVIDER));
+                }
+                resultSet.add(new SubstitutionDivider("C" + group, TYPE_GROUP_DIVIDER));
                 for (int i = 0; i < elements.size(); i++) {
                     if (elements.get(i).getSubstitutionDate().getDay() != date.getDay()) {
                         date = elements.get(i).getSubstitutionDate();
-                        resultSet.add(date);
+                        resultSet.add(new SubstitutionDivider(DateFormatter.dateToString(date), TYPE_DATE_DIVIDER));
+                    }
+                    if (elements.get(i).getGroup() != group) {
+                        group = elements.get(i).getGroup();
+                        resultSet.add(new SubstitutionDivider("C" + group, TYPE_GROUP_DIVIDER));
                     }
                     resultSet.add(elements.get(i));
                 }
@@ -136,18 +198,6 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             SubstitutionAdapter.this.elements = substitutions;
             notifyDataSetChanged();
         }
-    }
-
-
-    static class DividerViewHolder extends RecyclerView.ViewHolder {
-
-        SubstitutionDateDividerBinding binding;
-
-        DividerViewHolder(@NonNull View itemView) {
-            super(itemView);
-            binding = SubstitutionDateDividerBinding.bind(itemView);
-        }
-
     }
 
     class SubstitutionViewHolder extends RecyclerView.ViewHolder {
@@ -168,12 +218,11 @@ class SubstitutionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         void bind(Substitution substitution, boolean selected) {
             binding.pair.setText(String.valueOf(substitution.getPair()));
             binding.cabinet.setText("к. " + substitution.getCabinet());
-            binding.group.setText(String.valueOf(substitution.getGroup()));
             binding.subject.setText(substitution.getSubject());
             binding.teacher.setText(substitution.getTeacher());
             if (substitution.getStatus().equals(Substitution.STATUS_SYNCHRONIZED)) {
                 binding.status.setText("\u2022 Синхронизировано");
-                binding.status.setTextColor(Color.GREEN);
+                binding.status.setTextColor(Color.rgb(0, 91, 170));
             } else if (substitution.getStatus().equals(Substitution.STATUS_NOT_SYNCHRONIZED)) {
                 binding.status.setText("\u2022 Не синхронизировано");
                 binding.status.setTextColor(Color.rgb(255, 132, 0));
