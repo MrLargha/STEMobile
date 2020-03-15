@@ -132,6 +132,7 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
                         steRepository.insertSubstitutionToDB(substitution);
                     } else {
                         builder.setCustomError("Такое замещение уже добавлено");
+                        break;
                     }
                 } catch (ParseException e) {
                     builder.setDateError("Неверный формат даты.");
@@ -184,7 +185,7 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
             if (substitutionFormHints != null) {
                 subjectsList.postValue(new ArrayList<>(substitutionFormHints.getSubjects()));
                 groupsList = new ArrayList<>(substitutionFormHints.getGroups());
-                teachersList.postValue(new ArrayLiAst<>(substitutionFormHints.getTeachers()));
+                teachersList.postValue(new ArrayList<>(substitutionFormHints.getTeachers()));
             }
         }
     }
