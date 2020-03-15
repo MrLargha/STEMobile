@@ -139,7 +139,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
-                    android:hint="Группа"
+                    android:hint="Группы"
+                    app:helperText="Номера через пробел"
                     app:hintEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -147,7 +148,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:imeOptions="actionNext"
-                        android:inputType="number"
+                        android:inputType="number|numberDecimal|phone"
                         android:nextFocusDown="@id/cab_edit"
                         android:nextFocusForward="@id/cab_edit" />
 

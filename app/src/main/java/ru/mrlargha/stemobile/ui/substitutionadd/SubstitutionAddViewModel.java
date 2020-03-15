@@ -75,7 +75,7 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
     }
 
     private ArrayList<String> parseGroups(String rawString){
-        String[] groups = rawString.split(",");
+        String[] groups = rawString.split(" ");
         ArrayList<String> result = new ArrayList<>();
         for(String group : groups){
             if(isGroupValid(group)){
