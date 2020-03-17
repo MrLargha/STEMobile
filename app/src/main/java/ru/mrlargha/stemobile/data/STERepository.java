@@ -46,7 +46,7 @@ public class STERepository {
     public void deleteSubstitution(Substitution substitution) {
         STERoomDatabase.getDatabaseExecutor().execute(() -> steDao.deleteByUID(substitution.getID()));
         // Delete from server if it is synchronized
-        if(substitution.getStatus().equals(Substitution.STATUS_NOT_SYNCHRONIZED))
+        if (substitution.getStatus().equals(Substitution.STATUS_SYNCHRONIZED))
             dataSource.deleteSubstitution(LoginRepository.getInstance(dataSource).getToken(), substitution);
     }
 
