@@ -12,6 +12,7 @@ import java.util.List;
 
 import ru.mrlargha.stemobile.data.model.Substitution;
 
+
 @Dao
 public interface STEDao {
 
