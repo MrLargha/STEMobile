@@ -189,5 +189,4 @@ public class SubstitutionAddViewModel extends AndroidViewModel {
             }
         }
     }
-
 }

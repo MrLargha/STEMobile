@@ -28,9 +28,9 @@ public class STEDataSource {
 
         Gson gson = builder.create();
         // Use for debug server
-        Retrofit mRetrofit = new Retrofit.Builder().baseUrl("http://fspovkbot.tmweb.ru/ste/")
+        Retrofit mRetrofit = new Retrofit.Builder().baseUrl("https://fspobot.tw1.ru/ste/")
 
-        // Use for production server
+                // Use for production server
 //        Retrofit mRetrofit = new Retrofit.Builder().baseUrl("https://fspovkbot.tmweb.ru/ste/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
