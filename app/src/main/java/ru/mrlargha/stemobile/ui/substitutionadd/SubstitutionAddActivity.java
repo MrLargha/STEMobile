@@ -93,6 +93,8 @@ public class SubstitutionAddActivity extends AppCompatActivity {
                                 mBinding.pairToggleGroup.check(R.id.pair4);
                                 break;
                             case 4:
+                                mBinding.pairToggleGroup.check(R.id.pair5);
+                            case 5:
                                 mBinding.pairToggleGroup.clearChecked();
                                 break;
                         }
