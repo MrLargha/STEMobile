@@ -44,13 +44,13 @@ public class LoginViewModel extends ViewModel {
 
     public void login(String username, String password) {
         if (checkForm(username, password)) {
-            new LoginTask().execute(username, hash(password));
+            new LoginTask().execute(username, password);
         }
     }
 
     void register(String username, String password) {
         if (checkForm(username, password)) {
-            new RegisterTask().execute(username, hash(password));
+            new RegisterTask().execute(username, password);
         }
     }
 
