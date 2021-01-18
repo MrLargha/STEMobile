@@ -18,3 +18,5 @@ Android-приложение, созданное для студенческог
 <img src="https://github.com/MrLargha/STEMobile/raw/master/screenshots/add.png" width="480" />
 > Экран управления привилегиями пользователей
 <img src="https://github.com/MrLargha/STEMobile/raw/master/screenshots/perms.png" width="480" />
+
+[Видео работы приложения](https://drive.google.com/file/d/1Ovutn4gGhnCIamFG9hwgPUPw1yWgk_rs/view?usp=sharing)
