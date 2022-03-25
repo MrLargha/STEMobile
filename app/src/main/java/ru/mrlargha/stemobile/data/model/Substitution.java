@@ -14,6 +14,9 @@ import java.util.Date;
 
 import ru.mrlargha.stemobile.database.DateConverter;
 
+/**
+ * Сущность замещения
+ */
 @Entity(tableName = "substitutions_table", indices = {@Index(value = {"group",
         "substitutionDate", "pair"}, unique = true)})
 public class Substitution {
@@ -30,28 +33,43 @@ public class Substitution {
     @NotNull
     @TypeConverters({DateConverter.class})
     @Expose
-    private Date substitutionDate;
+    private final Date substitutionDate;
 
     @Expose
-    private int group;
+    private final int group;
 
     @NotNull
     private String status;
 
     @Expose
-    private int pair;
+    private final int pair;
 
     @Expose
     @NotNull
-    private String cabinet;
+    private final String cabinet;
 
     @Expose
     @NotNull
-    private String teacher;
+    private final String teacher;
 
     @NotNull
-    private String author;
+    private final String author;
+    @Expose
+    @NotNull
+    private final String subject;
 
+    /**
+     * Конструктор по-умолчанию
+     *
+     * @param teacher          преподаватель
+     * @param subject          предмет
+     * @param group            группа
+     * @param pair             пара
+     * @param substitutionDate дата замещения
+     * @param cabinet          кабинет
+     * @param status           статус
+     * @param author           автор
+     */
     public Substitution(@NotNull String teacher, @NotNull String subject,
                         int group, int pair, @NotNull Date substitutionDate,
                         @NotNull String cabinet, @NotNull String status, @NotNull String author) {
@@ -64,10 +82,6 @@ public class Substitution {
         this.status = status;
         this.author = author;
     }
-
-    @Expose
-    @NotNull
-    private String subject;
 
     @NotNull
     public String getTeacher() {

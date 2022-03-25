@@ -1,12 +1,22 @@
 package ru.mrlargha.stemobile.data.model;
 
+/**
+ * Модель пользователя
+ */
 public class User {
-    private String name;
-    private int group;
+    private final String name;
+    private final int group;
     private String permissions;
-    private int vk_id;
+    private final int vk_id;
 
-
+    /**
+     * Конструктор по-умолчанию
+     *
+     * @param name        имя пользователя
+     * @param group       учебная группа пользователя
+     * @param permissions привилегии пользователя
+     * @param vk_id       vkID пользователя
+     */
     public User(String name, int group, String permissions, int vk_id) {
         this.name = name;
         this.group = group;

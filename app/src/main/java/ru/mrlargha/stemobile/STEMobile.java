@@ -13,7 +13,7 @@ public class STEMobile extends Application {
         super.onCreate();
         Log.d("stemobile", "Application created");
         VK.initialize(this);
-        Log.d("stemobile", "Vk lib initialized");
+        Log.d("stemobile", "application initialized");
         STERepository.getRepository(this);
     }
 }

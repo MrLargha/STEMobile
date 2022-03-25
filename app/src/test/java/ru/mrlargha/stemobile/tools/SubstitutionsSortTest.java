@@ -28,7 +28,7 @@
 //
 //        ArrayList<Substitution> shuffled = (ArrayList<Substitution>) original.clone();
 //        Collections.shuffle(shuffled);
-//        SubstitutionsSort.sortSubstitutions(shuffled);
+//        SubstitutionsSort(shuffled);
 //        assert compareLists(original, shuffled);
 //    }
 //

@@ -4,18 +4,26 @@ import androidx.annotation.Nullable;
 
 import ru.mrlargha.stemobile.data.model.LoginServerReply;
 
-
+/**
+ * Репозиторий авторизации
+ */
 public class LoginRepository {
 
     private static volatile LoginRepository instance;
 
-    private STEDataSource dataSource;
+    private final STEDataSource dataSource;
     private LoginServerReply user = null;
 
     private LoginRepository(STEDataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Получить экземпляр репоизитория
+     *
+     * @param dataSource источник данных
+     * @return инстанция <code>LoginRepository</code>
+     */
     public static LoginRepository getInstance(STEDataSource dataSource) {
         if (instance == null) {
             instance = new LoginRepository(dataSource);
@@ -23,10 +31,20 @@ public class LoginRepository {
         return instance;
     }
 
+    /**
+     * Авторизован ли пользователь
+     *
+     * @return true - если пользователь авторизован, false - если нет
+     */
     public boolean isLoggedIn() {
         return user.getStatus().equals("ok");
     }
 
+    /**
+     * Получить токен авторизации
+     *
+     * @return токен авторизации
+     */
     @Nullable
     public String getToken() {
         if (user != null) {
@@ -36,6 +54,11 @@ public class LoginRepository {
         }
     }
 
+    /**
+     * Получить имя пользователя
+     *
+     * @return имя пользователя
+     */
     @Nullable
     public String getName() {
         if (user != null) {
@@ -45,6 +68,9 @@ public class LoginRepository {
         }
     }
 
+    /**
+     * Завершить сеанс (анулировать токен)
+     */
     public void logout() {
         dataSource.logout(user.getSte_token());
         user = null;
@@ -54,7 +80,13 @@ public class LoginRepository {
         this.user = user;
     }
 
-
+    /**
+     * Авторизовать пользователя
+     *
+     * @param username имя пользователя
+     * @param password пароль
+     * @return ответ сервера <code>LoginServerReply</code>
+     */
     public Result<LoginServerReply> login(String username, String password) {
         Result result = dataSource.login(username, password);
         if (result instanceof Result.Success) {
@@ -63,6 +95,13 @@ public class LoginRepository {
         return result;
     }
 
+    /**
+     * Зарегистрировать пользователя
+     *
+     * @param vk_id    vk_id пользователя
+     * @param password пароль
+     * @return ответ сервера <code>LoginServerReply</code>
+     */
     public Result<LoginServerReply> register(String vk_id, String password) {
         Result result = dataSource.register(vk_id, password);
         if (result instanceof Result.Success) {
@@ -71,6 +110,12 @@ public class LoginRepository {
         return result;
     }
 
+    /**
+     * Получить информацию о пользователе
+     *
+     * @param token токен авторизации
+     * @return ответ сервера <code>LoginServerReply</code>
+     */
     public Result<LoginServerReply> getInfo(String token) {
         Result result = dataSource.getInfo(token);
         if (result instanceof Result.Success) {

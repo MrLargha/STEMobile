@@ -38,7 +38,8 @@ android {
 
         defaultConfig {
             minSdkVersion 19
-            targetSdkVersion 29
+            targetSdkVersion 31
+            testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
             applicationId "ru.mrlargha.stemobile"
             versionCode versionProps['VERSION_NUMBER'].toInteger()
             versionName "${mVersionName} Build: ${versionProps['VERSION_BUILD']}"
@@ -69,8 +70,8 @@ android {
         targetCompatibility = 1.8
     }
 
-    viewBinding {
-        enabled true
+    buildFeatures {
+        viewBinding true
     }
 }
 

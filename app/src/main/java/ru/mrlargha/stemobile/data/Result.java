@@ -2,6 +2,11 @@ package ru.mrlargha.stemobile.data;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Результат выполнения запроса
+ *
+ * @param <T> тип ответа сервера
+ */
 public class Result<T> {
     @NotNull
     @Override
@@ -18,7 +23,7 @@ public class Result<T> {
 
     // Success sub-class
     public final static class Success<T> extends Result {
-        private T data;
+        private final T data;
 
         Success(T data) {
             this.data = data;
@@ -31,7 +36,7 @@ public class Result<T> {
 
     // Error sub-class
     public final static class Error extends Result {
-        private String errorString;
+        private final String errorString;
 
         public Error(String errorString) {
             this.errorString = errorString;
